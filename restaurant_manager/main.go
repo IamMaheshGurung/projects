@@ -1,9 +1,20 @@
-package main
-
-import ()
+package main 
 
 
 
+import()
 
-func main() {
-    port := os.Get:
+
+
+func main(){
+    port := os.Genenv("PORT") 
+
+
+    if port == "" {
+        port = "8080"
+    }
+
+}
+
+
+
