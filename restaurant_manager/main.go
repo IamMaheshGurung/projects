@@ -12,6 +12,7 @@ import(
 )
 
 
+var  foodCollection *mongo.Collection = database.OpenCollection(database.Client, "food")
 
 func main(){
     port := os.Genenv("PORT") 
