@@ -6,10 +6,12 @@ import(
     "os"
     "github.com/gin-gonic/gin"
     "github.com/IamMaheshGurung/restaurant-management/database"
-    "github.com/IamMaheshGurung/restaurant-managemant/routes"
-    "github.com/IamMaheshGurung/restaurant-management/middleware"
-    "go.mongodb.org/mongo-driver/mongo"
-)
+    //"github.com/IamMaheshGurung/restaurant-managemant/routes"
+    //"github.com/IamMaheshGurung/restaurant-management/middleware"
+    "go.mongodb.org/mongo-driver/v2/mongo"
+   // "go.mongodb.org/mongo-driver/v2/mongo/options"
+    //"go.mongodb.org/mongo-driver/v2/mongo/readpref"
+    )
 
 
 var  foodCollection *mongo.Collection = database.OpenCollection(database.Client, "food")
