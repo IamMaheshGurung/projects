@@ -16,6 +16,7 @@ import(
      "time"
      "log"
      "context"
+     "fmt"
      
 
 
@@ -109,4 +110,17 @@ func UpdateAllToken(signedToken string, refreshedSignedToken, userID string){
     }
 }
 
+func ValidateTokens (signedToken string) (claims *MyCustomClaims, msg string){
+    token , err := jwt.ParseWithClaims(SECRET_KEY, &MyCustomClaims{}, func(token *jwt.Token)(interface{}, error) {
+        return []byte(SECRET_KEY), nil 
+    })
 
+    if err != nil {
+        log.Fatal(err)
+    }else if claims, ok := token.Claims.(*MyCustomClaims); ok{
+        fmt.Println(claims.Email, claims.RegisteredClaims.Issuer)
+    } else {
+        log.Fatal("Unknown claims type, cannot procced")
+    }
+    return claims, msg
+}
