@@ -8,7 +8,6 @@ import (
     "time"
     "github.com/IamMaheshGurung/eCommerce/initializers"
     "github.com/IamMaheshGurung/eCommerce/controller"
-    "github.com/IamMaheshGurung/eCommerce/middleware"
     "os"
     "os/signal"
     "fmt"
@@ -28,10 +27,7 @@ func init(){
 
 func main(){
 
-    http.HandleFunc("/signup", controllers.Signup)
-    http.HandleFunc("/login", controllers.Login)
-    http.Handle("/validate", middleware.RequireAuth(http.HandlerFunc(controllers.Validate)))
-
+    http.HandleFunc("/signup", controllers.RootHandler)
 
 
     port := ":" + os.Getenv("PORT")

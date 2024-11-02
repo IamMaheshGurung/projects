@@ -3,6 +3,7 @@
 
 
 import(
+    "fmt"
     "net/http"
     "log"
     "github.com/IamMaheshGurung/eCommerce/models"
@@ -10,9 +11,42 @@ import(
     "golang.org/x/crypto/bcrypt"
     "github.com/golang-jwt/jwt/v5"
     "github.com/IamMaheshGurung/eCommerce/initializers"
+    "github.com/IamMaheshGurung/eCommerce/middleware"
     "time"
     "os"
 )
+func RootHandler (w http.ResponseWriter, r *http.Request){
+    switch r.URL.Path {
+    case "/validate":
+        if r.Method == http.MethodGet {
+            middleware.RequireAuth(http.HandlerFunc(Validate)).ServeHTTP(w, r)
+        } else {
+            http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
+        }
+
+    case "/login":
+        if r.Method == http.MethodPost{
+             Login(w,r)
+         } else {
+             http.Error(w, "Method Not Allowed", http.StatusBadRequest)
+         }
+
+    case "/signup":
+        if r.Method == http.MethodPost{
+             Signup(w,r)
+         } else {
+             http.Error(w, "Method Not Allowed", http.StatusBadRequest)
+         }
+
+
+    
+
+    default:
+        fmt.Println("Invalid Request")
+        return
+    }
+}
+
 
 
 func Signup(w http.ResponseWriter, r *http.Request){
