@@ -21,7 +21,7 @@ func GetFoods()(w http.ResponseWriter, r * http.Request){
 
     //Get Pagination parameters 
 
-    recordPerPage, err := strconv.Atoi(r.URL.Query().Get("recordPerPage")
+    recordPerPage, err := strconv.Atoi(r.URL.Query().Get("recordPerPage"))
     if err != nil || recordPerPage < 1 {
         recordPerPage  = 10 
     }
@@ -32,15 +32,14 @@ func GetFoods()(w http.ResponseWriter, r * http.Request){
         page = 1 
     }
 
-    startIndex := (page -1) * recordPerPage
+    startIndex := (page -1) * recordPerPage// Calculate the starting index.
 
 
 
-    cursor, err := foodCollection.Find(ctx, bson.M{})
-    if err != nil {
-        http.Error(w, "Error occured while listing food items", http.StatusInternalServerError)
-        return 
-    }
-    defer cursor.Close()
+//mongoDB pipeline stages
 
-    var allFoods database.*:
+    matchStage := bson.D{{"$match", bson.D{{}}}}
+
+    groupStage := bson.D{{"$group", bson.D{{"_id", "null"}}}, {"total_count", bson.D{{"$sum", 1}}}, {"data", bson.D{{"$push", "$$ROOT"}}}}}}
+    projectStage := bson.D{{//Project to output
+        //from here
