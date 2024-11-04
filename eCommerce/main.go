@@ -27,7 +27,8 @@ func init(){
 
 func main(){
 
-    http.HandleFunc("/signup", controllers.RootHandler)
+    l := http.NewServeMux()
+    l.HandleFunc("/", controllers.RootHandler)
 
 
     port := ":" + os.Getenv("PORT")
@@ -37,6 +38,7 @@ func main(){
 
     server := http.Server{
         Addr :  port,
+        Handler : l,
         IdleTimeout: 120 * time.Second,
     }
 
