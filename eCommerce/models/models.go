@@ -4,15 +4,12 @@ package models
 
 import(
     "gorm.io/gorm"
-    //"gorm.io/driver/postgres"
 )
 
 
-
-
-type User struct {
+type Users struct {
     gorm.Model
     Email string `gorm:"unique"`
-    Password string
+    Password string 
 }
 

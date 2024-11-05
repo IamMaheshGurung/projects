@@ -2,11 +2,8 @@ package initializers
 
 
 
-
 import(
-    /*"gorm.io/gorm"
-    "gorm.io/driver/postgres"*/
-    "github.com/IamMaheshGurung/eCommerce/models"
+    "github.com/IamMaheshGurung/ecommerce/models"
     "log"
 
 
@@ -16,9 +13,11 @@ import(
 
 func SyncDB() {
     err := DB.AutoMigrate(&models.User{})
+
     if err != nil {
-        log.Fatal("failed to migrate date:", err)
+        log.Fatalf("Failed to migrate the data : %s",err)
     }
-    log.Println("Database has been connected sucessfully")
+    log.Println("Database has been connected successfully")
+
 }
 

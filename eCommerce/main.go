@@ -2,51 +2,52 @@ package main
 
 
 
-import (
-    "net/http"
-    "log"
-    "time"
-    "github.com/IamMaheshGurung/eCommerce/initializers"
-    "github.com/IamMaheshGurung/eCommerce/controller"
-    "os"
-    "os/signal"
-    "fmt"
-    "context"
-)
+import(
+"net/http"
+"fmt"
+"log"
+"github.com/IamMaheshGurung/ecommerce/initializers"
+"time"
+"os"
+"os/signal"
+"context")
+
 
 
 
 func init(){
+
+
     initializers.LoadEnvVariables()
-    initializers.InitDB()
-    initializers.SyncDB()
+
 
 }
 
 
 
+
+
+
 func main(){
+    handler := http.NewServeMux()
 
-    l := http.NewServeMux()
-    l.HandleFunc("/", controllers.RootHandler)
-
-
-    port := ":" + os.Getenv("PORT")
-    if port == ":" + ""{
+    port := os.Getenv("MYPORT")
+    if port == "" {
         port = ":8080"
     }
 
+
     server := http.Server{
-        Addr :  port,
-        Handler : l,
-        IdleTimeout: 120 * time.Second,
+        Addr: port,
+        Handler: handler,
+        IdleTimeout: 120 *  time.Second,
     }
 
     go func(){
         fmt.Printf("Server is running at port %s", port)
         err := server.ListenAndServe()
         if err != nil {
-            log.Fatalf("Sorry unable to serve %s", err)
+            log.Fatalf("Sorry Unable to serve %s", err)
         }
     }()
 
@@ -55,26 +56,23 @@ func main(){
 
     signal.Notify(stop, os.Kill, os.Interrupt)
 
-    <- stop
+    <-stop
 
-    ctx, cancel := context.WithTimeout(context.Background(), 25 * time.Second)
+
+    ctx, cancel := context.WithTimeout(context.Background(), 10 * time.Second)
+
     defer cancel()
 
-
-
-    fmt.Println("Graceful shutdown has been requested")
-
+    fmt.Println("Request for graceful shutdown has been done")
     err := server.Shutdown(ctx)
-    if err != nil{
+    if err != nil {
         log.Fatalf("Unable to shutdown the server %s", err)
     }
+    fmt.Println("Server has been shutdown gracefully")
 
-    fmt.Println("server has been shutdown gracefully")
+
+
+
+
+
 }
-
-
-
-
-
-
-

@@ -1,13 +1,10 @@
 package initializers
 
 
-
-
-import(
+import (
     "log"
     "github.com/joho/godotenv"
 )
-
 
 
 
