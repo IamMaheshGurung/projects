@@ -7,6 +7,7 @@ import(
 "fmt"
 "log"
 "github.com/IamMaheshGurung/ecommerce/initializers"
+"github.com/IamMaheshGurung/ecommerce/controllers"
 "time"
 "os"
 "os/signal"
@@ -30,7 +31,7 @@ func init(){
 
 func main(){
     handler := http.NewServeMux()
-
+    handler.HandleFunc("/", controllers.Roothandler)
     port := os.Getenv("MYPORT")
     if port == "" {
         port = ":8080"

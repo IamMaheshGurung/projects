@@ -12,7 +12,7 @@ import(
 
 
 func SyncDB() {
-    err := DB.AutoMigrate(&models.User{})
+    err := DB.AutoMigrate(&models.Users{})
 
     if err != nil {
         log.Fatalf("Failed to migrate the data : %s",err)

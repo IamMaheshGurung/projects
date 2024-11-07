@@ -40,7 +40,7 @@ func Roothandler(w http.ResponseWriter, r * http.Request){
     case http.MethodGet:
         if r.URL.Path=="/validate"{
 
-            middleware.RequireAuth(http.HandlerFunc(Validate)(http.ServeHTTP)(w,r))
+            middleware.RequireAuth(http.HandlerFunc(Validate)).ServeHTTP(w,r)
         }
     }
 
