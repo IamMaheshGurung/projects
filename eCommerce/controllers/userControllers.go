@@ -119,6 +119,7 @@ func Login(w http.ResponseWriter, r * http.Request){
 
     initializers.DB.First(&user, "email=?", body.Email)
     if user.ID == 0 {
+        fmt.Println("I think you need to signup first")
         http.Error(w, "Incorrect Email", http.StatusUnauthorized)
         return 
     }
@@ -164,7 +165,7 @@ func Login(w http.ResponseWriter, r * http.Request){
     w.Write([]byte("Cookies are set successfully"))
 }
 
-
+// function for validating 
 func Validate(w http.ResponseWriter, r*http.Request){
     message :=map[string]string{"message":"I am Logged in with the validation now"}
     w.Header().Set("Content-Type", "application/json")
