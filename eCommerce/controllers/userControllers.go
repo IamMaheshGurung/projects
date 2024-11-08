@@ -70,25 +70,26 @@ func Signup(w http.ResponseWriter, r *http.Request){
 
     }
 
-
+//Decode request from the body
     err := json.NewDecoder(r.Body).Decode(&body)
     if err != nil {
         http.Error(w, "Unable to decode the body:%s", http.StatusInternalServerError)
         return 
     }
 
-
+//hash or bind the password received from the body here
     hash, err := bcrypt.GenerateFromPassword([]byte(body.Password), 15)
     if err != nil {
         http.Error(w, "Unable to generate encrypted password", http.StatusInternalServerError)
         return 
     }
-
-    user := models.Users{Email : body.Email, Password: string(hash),}
+//now initalize the user of model struct user with received email and hashed password
+    user := models.Users{Email : body.Email, Password: /*stringed hash*/ string(hash),}
     result := initializers.DB.Create(&user)
     if result.Error!= nil {
         log.Printf("Failed to create the user here")
     }
+// if everything goes right give ok status
     w.WriteHeader(http.StatusOK)
 
 }
@@ -97,6 +98,7 @@ func Signup(w http.ResponseWriter, r *http.Request){
 
 
 func Login(w http.ResponseWriter, r * http.Request){
+//declare a body struct
     var body struct {
         Email string 
         Password string
@@ -117,6 +119,7 @@ func Login(w http.ResponseWriter, r * http.Request){
 
     initializers.DB.First(&user, "email=?", body.Email)
     if user.ID == 0 {
+        fmt.Println("I think you need to signup first")
         http.Error(w, "Incorrect Email", http.StatusUnauthorized)
         return 
     }
@@ -162,7 +165,7 @@ func Login(w http.ResponseWriter, r * http.Request){
     w.Write([]byte("Cookies are set successfully"))
 }
 
-
+// function for validating 
 func Validate(w http.ResponseWriter, r*http.Request){
     message :=map[string]string{"message":"I am Logged in with the validation now"}
     w.Header().Set("Content-Type", "application/json")
