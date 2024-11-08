@@ -17,10 +17,10 @@ import(
 
 
 func init(){
-
-
-    initializers.LoadEnvVariables()
-
+     initializers.LoadEnvVariables()
+    initializers.InitDB()
+    initializers.SyncDB()
+   
 
 }
 
