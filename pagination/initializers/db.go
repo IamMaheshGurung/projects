@@ -6,6 +6,8 @@ import (
     "gorm.io/gorm"
     "gorm.io/driver/postgres"
     "fmt"
+    "os"
+    "github.com/IamMaheshGurung/pagination/models"
 
 
 )
@@ -25,7 +27,7 @@ func SyncDB(){
 func ConnectToDB(){
     var err error 
 
-
+    dsn := os.Getenv("DSN")
     DB, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
 
     if err != nil {
