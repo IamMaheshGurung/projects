@@ -1,6 +1,7 @@
 package initializers
 
 import (
+    "time"
 	"math/rand"
 
 	"github.com/IamMaheshGurung/pagination/models"
@@ -229,7 +230,7 @@ func CreatePeople() {
 		"Arnav",
 		"Arnold",
 		"Aron",
-		"Aronas",
+        "Aronas",
 		"Arran",
 		"Arrham",
 		"Arron",
@@ -2748,9 +2749,12 @@ func CreatePeople() {
 		"Zuriel",
 	}
 
+    randSource := rand.NewSource(time.Now().UnixNano())
+    random := rand.New(randSource)
+
 	for i := 0; i < 1000; i++ {
-		firstRand := rand.Intn(len(names))
-		secondRand := rand.Intn(len(names))
+		firstRand := random.Intn(len(names))
+		secondRand := random.Intn(len(names))
 		firstName := names[firstRand]
 		lastName := names[secondRand]
 

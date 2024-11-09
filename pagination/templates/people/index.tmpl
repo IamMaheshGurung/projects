@@ -1,31 +1,112 @@
-{{template "top" .}}
 
-<div class="people">
-  <div class="width">
-    <h1>People</h1>
 
-    <div class="people-table">
-      <div class="person-row head">
-        <div class="person-row-id">ID</div>
-        <div class="person-row-first">First Name</div>
-        <div class="person-row-last">Last Name</div>
-      </div>
+{{define "index"}}
 
-      {{ range.people }}
-      <div class="person-row">
-        <div class="person-row-id">
-          {{ .ID }}
-        </div>
-        <div class="person-row-first">
-          {{ .FirstName }}
-        </div>
-        <div class="person-row-last">
-          {{ .LastName }}
-        </div>
-      </div>
-      {{ end }}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>People</title>
+
+  <!-- Internal CSS -->
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      color: #333;
+      line-height: 1.6;
+      margin: 0;
+      padding: 20px;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .people-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-top: 20px;
+    }
+
+    .people-column {
+      margin: 0 20px;
+    }
+
+    .people-column h2 {
+      text-align: center;
+      margin-bottom: 10px;
+    }
+
+    .people-column ul {
+      list-style-type: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .people-column li {
+      padding: 8px 0;
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 40px;
+      padding: 10px;
+      background-color: #333;
+      color: white;
+    }
+  </style>
+
+</head>
+<body>
+
+  <h1>People</h1>
+
+  <!-- Container to hold 3 columns -->
+  <div class="people-container">
+    
+    <!-- Column for IDs -->
+    <div class="people-column">
+      <h2>ID</h2>
+      <ul>
+        {{ range .people }}
+        <li>{{ .ID }}</li>
+        {{ end }}
+      </ul>
     </div>
-  </div>
-</div>
 
-{{template "bottom" .}}
+    <!-- Column for First Names -->
+    <div class="people-column">
+      <h2>First Name</h2>
+      <ul>
+        {{ range .people }}
+        <li>{{ .FirstName }}</li>
+        {{ end }}
+      </ul>
+    </div>
+
+    <!-- Column for Last Names -->
+    <div class="people-column">
+      <h2>Last Name</h2>
+      <ul>
+        {{ range .people }}
+        <li>{{ .LastName }}</li>
+        {{ end }}
+      </ul>
+    </div>
+
+  </div>
+
+  <footer>
+    <p>Footer Content</p>
+  </footer>
+
+</body>
+</html>
+
+{{end}}
+
