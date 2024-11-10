@@ -15,6 +15,17 @@ import (
 
 )
 
+//Pagination Data
+
+
+type PaginationData struct {
+    NextPage int
+    PreviousPage int
+    CurrentPage int
+}
+
+
+
 func PeopleIndexGET(w http.ResponseWriter, r *http.Request) {
 
     //just checking in the file if the tmpl file is there or not
@@ -38,7 +49,7 @@ log.Printf("Received page query: '%s'", pageStr)
     
     // Get the people from the database
     var people []models.Person
-    if err := initializers.DB.Limit(10).Offset(offset).Find(&people).Error; err != nil {
+    if err := initializers.DB.Limit(100).Offset(offset).Find(&people).Error; err != nil {
 
         log.Printf("Error fetching people from the database: %v", err)
         http.Error(w, "Error fetching people data", http.StatusInternalServerError)
@@ -61,6 +72,12 @@ log.Printf("Received page query: '%s'", pageStr)
     // Render the page with the people data
     err = tmpl.Execute(w, map[string]interface{}{
         "people": people,
+        "pagination":PaginationData{
+            NextPage : page + 1,
+            PreviousPage: page -1,
+            CurrentPage: page,
+        },
+        
     })
     if err != nil {
         log.Printf("Error rendering template: %v", err)
