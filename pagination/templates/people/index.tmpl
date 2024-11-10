@@ -37,17 +37,35 @@
         {{ end }}
       </ul>
     </div>
+
+
     <div class="pagination">
     <ul>
     <li>
+    {{if (gt .pagination.CurrentPage 1)}}
     <a href="/page/{{.pagination.PreviousPage}}">
     Previous
     </a>
+
+    {{else}}
+    <span>
+    Pervious
+    </span>
+
+
+    {{end}}
+    
     </li>
     <li>
+    {{if (lt .pagination.CurrentPage .pagination.TotalPages)}}
     <a href="/page/{{.pagination.NextPage}}">
     Next
     </a>
+    {{else}}
+    <span>
+    Next
+    </span>
+    {{end}}
     </li>
    
 
