@@ -2,68 +2,7 @@
 
 {{define "index"}}
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>People</title>
-
-  <!-- Internal CSS -->
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #f4f4f4;
-      color: #333;
-      line-height: 1.6;
-      margin: 0;
-      padding: 20px;
-    }
-
-    h1 {
-      text-align: center;
-      margin-bottom: 20px;
-    }
-
-    .people-container {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      margin-top: 20px;
-    }
-
-    .people-column {
-      margin: 0 20px;
-    }
-
-    .people-column h2 {
-      text-align: center;
-      margin-bottom: 10px;
-    }
-
-    .people-column ul {
-      list-style-type: none;
-      padding: 0;
-      margin: 0;
-    }
-
-    .people-column li {
-      padding: 8px 0;
-    }
-
-    footer {
-      text-align: center;
-      margin-top: 40px;
-      padding: 10px;
-      background-color: #333;
-      color: white;
-    }
-  </style>
-
-</head>
-<body>
-
+{{template "top"}}
   <h1>People</h1>
 
   <!-- Container to hold 3 columns -->
@@ -101,12 +40,7 @@
 
   </div>
 
-  <footer>
-    <p>Footer Content</p>
-  </footer>
-
-</body>
-</html>
+ {{template "bottom"}}
 
 {{end}}
 

@@ -8,29 +8,38 @@ import (
     "github.com/IamMaheshGurung/pagination/initializers"
     "github.com/IamMaheshGurung/pagination/models"
     "html/template"
-    "os"
+    //"fmt"
+    "strconv"
+    "github.com/gorilla/mux"
   
 
 )
-func checkFileExists(filePath string) {
-    _, err := os.Stat(filePath)
-    if err != nil {
-        if os.IsNotExist(err) {
-            log.Printf("File does not exist: %s", filePath)
-        } else {
-            log.Printf("Error accessing file: %s", filePath)
-        }
-    } else {
-        log.Printf("File exists: %s", filePath)
-    }
-}
 
 func PeopleIndexGET(w http.ResponseWriter, r *http.Request) {
-       checkFileExists("templates/people/index.tmpl")
+
+    //just checking in the file if the tmpl file is there or not
+    
+    //Get Page Number
+    vars := mux.Vars(r)
+    pageStr := vars["page"]
+   
+log.Printf("Received page query: '%s'", pageStr)
+
+    // Default to page 1 if "page" is missing or invalid
+    page, err := strconv.Atoi(pageStr)
+    if err != nil || page < 1 {
+        // Default to page 1 if invalid or missing
+        page = 1
+        log.Printf("Invalid or missing page number '%s', defaulting to page 1", pageStr)
+    }
+
+    offset := (page-1) * 10
+
     
     // Get the people from the database
     var people []models.Person
-    if err := initializers.DB.Find(&people).Error; err != nil {
+    if err := initializers.DB.Limit(10).Offset(offset).Find(&people).Error; err != nil {
+
         log.Printf("Error fetching people from the database: %v", err)
         http.Error(w, "Error fetching people data", http.StatusInternalServerError)
         return
@@ -38,7 +47,7 @@ func PeopleIndexGET(w http.ResponseWriter, r *http.Request) {
 
     // Parse all templates (top, index, bottom)
     tmpl := template.Must(template.New("index").ParseFiles(
-               "templates/people/index.tmpl",
+               "templates/people/top.tmpl","templates/people/index.tmpl","templates/people/bottom.tmpl",
             ))
     /*if tmpl.Error != nil {
         log.Printf("Error parsing templates: %v", err)
@@ -50,7 +59,7 @@ func PeopleIndexGET(w http.ResponseWriter, r *http.Request) {
     log.Println("Successfully loaded templates")
 
     // Render the page with the people data
-    err := tmpl.Execute(w, map[string]interface{}{
+    err = tmpl.Execute(w, map[string]interface{}{
         "people": people,
     })
     if err != nil {
