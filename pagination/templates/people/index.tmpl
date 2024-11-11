@@ -5,74 +5,48 @@
 {{template "top"}}
   <h1>People</h1>
 
-  <!-- Container to hold 3 columns -->
+  <!-- Container for Table -->
   <div class="people-container">
-    
-    <!-- Column for IDs -->
-    <div class="people-column">
-      <h2>ID</h2>
-      <ul>
+    <table class="people-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>First Name</th>
+          <th>Last Name</th>
+        </tr>
+      </thead>
+      <tbody>
         {{ range .people }}
-        <li>{{ .ID }}</li>
+        <tr>
+          <td>{{ .ID }}</td>
+          <td>{{ .FirstName }}</td>
+          <td>{{ .LastName }}</td>
+        </tr>
         {{ end }}
-      </ul>
-    </div>
-
-    <!-- Column for First Names -->
-    <div class="people-column">
-      <h2>First Name</h2>
-      <ul>
-        {{ range .people }}
-        <li>{{ .FirstName }}</li>
-        {{ end }}
-      </ul>
-    </div>
-
-    <!-- Column for Last Names -->
-    <div class="people-column">
-      <h2>Last Name</h2>
-      <ul>
-        {{ range .people }}
-        <li>{{ .LastName }}</li>
-        {{ end }}
-      </ul>
-    </div>
-
-
-    <div class="pagination">
-    <ul>
-    <li>
-    {{if (gt .pagination.CurrentPage 1)}}
-    <a href="/page/{{.pagination.PreviousPage}}">
-    Previous
-    </a>
-
-    {{else}}
-    <span>
-    Pervious
-    </span>
-
-
-    {{end}}
-    
-    </li>
-    <li>
-    {{if (lt .pagination.CurrentPage .pagination.TotalPages)}}
-    <a href="/page/{{.pagination.NextPage}}">
-    Next
-    </a>
-    {{else}}
-    <span>
-    Next
-    </span>
-    {{end}}
-    </li>
-   
-
-
+      </tbody>
+    </table>
   </div>
 
- {{template "bottom"}}
+  <!-- Pagination Controls -->
+  <div class="pagination">
+    <div class="pagination-controls">
+      {{if (gt .pagination.CurrentPage 1)}}
+        <a class="pagination-btn" href="/page/{{.pagination.PreviousPage}}">Previous</a>
+      {{else}}
+        <span class="pagination-btn disabled">Previous</span>
+      {{end}}
+
+      <span class="pagination-current">Page {{ .pagination.CurrentPage }}</span>
+
+      {{if (lt .pagination.CurrentPage .pagination.TotalPages)}}
+        <a class="pagination-btn" href="/page/{{.pagination.NextPage}}">Next</a>
+      {{else}}
+        <span class="pagination-btn disabled">Next</span>
+      {{end}}
+    </div>
+  </div>
+
+{{template "bottom"}}
 
 {{end}}
 
