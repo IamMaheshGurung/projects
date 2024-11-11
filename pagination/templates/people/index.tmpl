@@ -86,7 +86,15 @@
         <span class="pagination-btn disabled">Previous</span>
       {{end}}
 
-      <span class="pagination-current">Page {{ .pagination.CurrentPage }}</span>
+         {{if (gt .pagination.TwoPageDown 2)}}
+        <a class="pagination-btn" href="/page/{{.pagination.TwoPageDown}}">{{.pagination.TwoPageDown}}</a>
+      {{else}}
+        <span class="pagination-btn disabled">Previous</span>
+      {{end}}
+
+
+
+      <span class="pagination-current">{{ .pagination.CurrentPage }}</span>
 
       {{if (lt .pagination.CurrentPage .pagination.TotalPages)}}
         <a class="pagination-btn" href="/page/{{.pagination.NextPage}}">Next</a>

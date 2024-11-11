@@ -11,20 +11,12 @@ import (
     //"fmt"
     "strconv"
     "github.com/gorilla/mux"
-    "math"
+    "github.com/IamMaheshGurung/pagination/helpers"
   
 
 )
 
 //Pagination Data
-
-
-type PaginationData struct {
-    NextPage int
-    PreviousPage int
-    CurrentPage int
-    TotalPages int
-}
 
 
 
@@ -45,19 +37,13 @@ log.Printf("Received page query: '%s'", pageStr)
         log.Printf("Invalid or missing page number '%s', defaulting to page 1", pageStr)
     }
     
-    //Calculating totalPages
-    var totalRows int64
-    initializers.DB.Model(&models.Person{}).Count(&totalRows)
-    totalPages := math.Ceil(float64(totalRows / int64(perPage))) 
-    log.Printf("Total Pages available are %d", int(totalPages))
+      // log.Printf("Total Pages available are %d", int(totalPages))
 
-    //calculating offset
-    offset := (page-1) * perPage
-
+    
     
     // Get the people from the database
     var people []models.Person
-    if err := initializers.DB.Limit(perPage).Offset(offset).Find(&people).Error; err != nil {
+    if err := initializers.DB.Limit(perPage).Offset(pagination.Offset).Find(&people).Error; err != nil {
 
         log.Printf("Error fetching people from the database: %v", err)
         http.Error(w, "Error fetching people data", http.StatusInternalServerError)
@@ -68,24 +54,15 @@ log.Printf("Received page query: '%s'", pageStr)
     tmpl := template.Must(template.New("index").ParseFiles(
                "templates/people/top.tmpl","templates/people/index.tmpl","templates/people/bottom.tmpl",
             ))
-    /*if tmpl.Error != nil {
-        log.Printf("Error parsing templates: %v", err)
-        http.Error(w, "Error parsing the template", http.StatusInternalServerError)
-        return
-    }*/
-
+    
     // Log the parsed templates
     log.Println("Successfully loaded templates")
-
+    pagination := helpers.GetPaginationData(page, perPage, models.Person{})
     // Render the page with the people data
     err = tmpl.Execute(w, map[string]interface{}{
         "people": people,
-        "pagination":PaginationData{
-            NextPage : page + 1,
-            PreviousPage: page -1,
-            CurrentPage: page,
-            TotalPages : int(totalPages),
-        },
+        "pagination":pagination,
+            
         
     })
     if err != nil {
