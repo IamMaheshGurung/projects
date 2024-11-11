@@ -1,9 +1,59 @@
-
-
 {{define "index"}}
 
 {{template "top"}}
+
   <h1>People</h1>
+
+  <!-- Inline CSS for table and pagination styling -->
+  <style>
+    /* Table Styling */
+    .people-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+
+    .people-table th, .people-table td {
+      padding: 10px;
+      border: 1px solid #ddd;
+      text-align: left;
+    }
+
+    .people-table th {
+      background-color: #f4f4f4;
+    }
+
+    /* Pagination Styling */
+    .pagination-controls {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 20px;
+    }
+
+    .pagination-btn {
+      padding: 10px 20px;
+      margin: 0 10px;
+      background-color: #007bff;
+      color: white;
+      text-decoration: none;
+      border-radius: 5px;
+    }
+
+    .pagination-btn:hover {
+      background-color: #0056b3;
+    }
+
+    .pagination-btn.disabled {
+      background-color: #ccc;
+      pointer-events: none;
+    }
+
+    .pagination-current {
+      margin: 0 10px;
+      font-weight: bold;
+    }
+  </style>
 
   <!-- Container for Table -->
   <div class="people-container">
@@ -49,4 +99,3 @@
 {{template "bottom"}}
 
 {{end}}
-
