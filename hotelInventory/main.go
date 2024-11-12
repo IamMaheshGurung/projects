@@ -10,6 +10,8 @@ import (
     "os/signal"
     "context"
     "log"
+    "github.com/IamMaheshGurung/projects/hotelInventory/initializers"
+    
 
 
 )
@@ -19,7 +21,9 @@ import (
 
 func init(){
 
-
+initializers.ConnectDB()
+initializers.LoadEnvVariables()
+initializers.SyncDB()
 }
 
 
