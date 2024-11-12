@@ -20,9 +20,9 @@ import (
 
 
 func init(){
+initializers.LoadEnvVariables()
 
 initializers.ConnectDB()
-initializers.LoadEnvVariables()
 initializers.SyncDB()
 }
 
@@ -36,20 +36,21 @@ func main(){
     port:= os.Getenv("PORT")
 
     server := http.Server{
-        Addr : port,
+        Addr : ":"+ port,
         Handler : router,
         IdleTimeout: 120 * time.Second,
     }
 
 
     go func(){
+         log.Printf("Server is running at %s", port)
         err := server.ListenAndServe()
         if err != nil {
             log.Fatalf("Unable to connect to the server%s", err)
             return 
         }
         
-        log.Printf("Server is running at %s", port)
+       
     }()
 
 
