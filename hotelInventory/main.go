@@ -12,6 +12,7 @@ import (
     "log"
     "github.com/IamMaheshGurung/projects/hotelInventory/initializers"
     
+    "github.com/IamMaheshGurung/projects/hotelInventory/routers"
 
 
 )
@@ -32,6 +33,7 @@ initializers.SyncDB()
 func main(){
 
     router := mux.NewRouter()
+    routers.SetupRouters(router)
 
     port:= os.Getenv("PORT")
 
