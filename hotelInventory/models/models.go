@@ -7,9 +7,17 @@ import(
 )
 
 
-type Users struct {
+type Inventory struct {
     gorm.Model
-    Email string `gorm:"unique"`
-    Password string 
+    ItemType string `json:"item_type"`
+    Quantity int `json:"quantity"`
 }
+
+
+type UsageLog struct {
+    gorm.Model
+    TimeStamp string `json:"timesstamp"`
+    TotalGuest int `json:"total_guest"`
+}
+
 
