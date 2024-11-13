@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport content="width=device-width, initial-scale=1.0">
+        <title>Lalaca Inventory Management</title>
+    </head>
+    
+    <body>
+        <h1> LALACA Inventory Management</h1>
+
+        <div id="bedstore">
+            <h2>ITEM LIST</h2>
+            <table>
+                <thead> 
+                    <tr>
+                        <th>Name</th>
+                        <th>Quantity</th>
+                        <th>Remarks</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{range .Items}}
+                    <tr>
+                        <td>{{.Name}}</td>
+
+                        <td>{{.Quantity}}</td>
+
+                        <td>{{.Remarks}}</td>
+                        <td>
+                            <a href="/edit/{{.ID}}">Edit</a> |
+                            <a href="/delete/{{.ID}}">Delete</a>
+                        <td>
+
+                    </tr>
+                    {{.end}}
+                </tbody>
+            </table>
+    </body>
+</html>
+
+
+
+
+            
