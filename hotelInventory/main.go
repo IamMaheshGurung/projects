@@ -18,6 +18,7 @@ import (
 )
 
 
+//adding initializers files only
 
 
 func init(){
@@ -31,7 +32,7 @@ initializers.SyncDB()
 
 
 func main(){
-
+//using the gorilla mux for the first time
     router := mux.NewRouter()
     routers.SetupRouters(router)
 
