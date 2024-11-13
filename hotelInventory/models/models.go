@@ -7,9 +7,9 @@ import(
 )
 
 
-type Inventory struct {
+type Item struct {
     gorm.Model
-    ItemType string `json:"item_type"`
+    Name string `json:"name"`
     Quantity int `json:"quantity"`
 }
 
