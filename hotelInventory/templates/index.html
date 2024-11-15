@@ -42,8 +42,40 @@
 
             <!-- Add Item Button -->
             <div>
+
+        <div id="guestlog">
+            <h2>ITEM LIST</h2>
+            {{if .TotalGuest}}
+            <table>
+                <thead> 
+                    <tr>
+                        <th>Timestamp</th>
+                        <th>TotalGuest</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{range .TotalGuest}}
+                    <tr>
+                        <td>{{.TimeStamp}}</td>
+                        <td>{{.TotalGuest}}</td>
+                        <td>
+                            <a href="/edit/{{.ID}}">Edit</a> |
+                            <a href="/delete/{{.ID}}">Delete</a>
+                        </td>
+                    </tr>
+                    {{end}}
+                </tbody>
+            </table>
+            {{else}}
+            <p>No items available.</p>
+            {{end}}
+
+            <!-- Add Item Button -->
+            <div>
+
                 <a href="/create">
-                    <button>Add Item</button>
+                    <button>Guest Today</button>
                 </a>
             </div>
         </div>
