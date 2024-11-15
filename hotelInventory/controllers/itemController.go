@@ -32,7 +32,7 @@ func ShowInventory(w http.ResponseWriter, r *http.Request) {
 
 
     allGuest := initializers.DB.Find(&totalGuest)
-    if result.Error != nil {
+    if allGuest.Error != nil {
         log.Printf("Error fetching items: %v", result.Error)
         http.Error(w, result.Error.Error(), http.StatusInternalServerError)
         return
@@ -52,10 +52,12 @@ func ShowInventory(w http.ResponseWriter, r *http.Request) {
     }
 
     err = tmpl.Execute(w, struct {
-        Items []models.Item
-    }{Items: items},
-    struct { TotalGuest []models.GuestLog}{TotalGuest : totalGuest} )
-
+        Items    []models.Item
+        TotalGuest []models.GuestLog
+    }{
+        Items:     items,
+        TotalGuest: totalGuest,
+    })
     if err != nil {
         log.Printf("Error executing template: %v", err)
         http.Error(w, "Execution error: "+err.Error(), http.StatusInternalServerError)
@@ -104,7 +106,7 @@ func CreateInventory(w http.ResponseWriter, r *http.Request) {
     }
 }
 
-func AutoUpdateInventory(
+//func AutoUpdateInventory(
 
 
 

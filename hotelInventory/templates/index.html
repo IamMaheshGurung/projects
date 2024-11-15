@@ -1,86 +1,91 @@
 
 
+
 <!DOCTYPE html>
-
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Lalaca Inventory Management</title>
-    </head>
-    
-    <body>
-        <h1> LALACA Inventory Management</h1>
 
-        <div id="bedstore">
-            <h2>ITEM LIST</h2>
-            {{if .Items}}
-            <table>
-                <thead> 
-                    <tr>
-                        <th>Name</th>
-                        <th>Quantity</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {{range .Items}}
-                    <tr>
-                        <td>{{.Name}}</td>
-                        <td>{{.Quantity}}</td>
-                        <td>
-                            <a href="/edit/{{.ID}}">Edit</a> |
-                            <a href="/delete/{{.ID}}">Delete</a>
-                        </td>
-                    </tr>
-                    {{end}}
-                </tbody>
-            </table>
-            {{else}}
-            <p>No items available.</p>
-            {{end}}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lalaca Inventory Management</title>
+</head>
 
-            <!-- Add Item Button -->
-            <div>
+<body>
+    <h1>LALACA Inventory Management</h1>
 
-        <div id="guestlog">
-            <h2>ITEM LIST</h2>
-            {{if .TotalGuest}}
-            <table>
-                <thead> 
-                    <tr>
-                        <th>Timestamp</th>
-                        <th>TotalGuest</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {{range .TotalGuest}}
-                    <tr>
-                        <td>{{.TimeStamp}}</td>
-                        <td>{{.TotalGuest}}</td>
-                        <td>
-                            <a href="/edit/{{.ID}}">Edit</a> |
-                            <a href="/delete/{{.ID}}">Delete</a>
-                        </td>
-                    </tr>
-                    {{end}}
-                </tbody>
-            </table>
-            {{else}}
-            <p>No items available.</p>
-            {{end}}
+    <div id="bedstore">
+        <h2>ITEM LIST</h2>
 
-            <!-- Add Item Button -->
-            <div>
+        <!-- Display Inventory Table -->
+        {{if .Items}}
+        <table border="1">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Quantity</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{range .Items}}
+                <tr>
+                    <td>{{.Name}}</td>
+                    <td>{{.Quantity}}</td>
+                    <td>
+                        <a href="/edit/{{.ID}}">Edit</a> |
+                        <a href="/delete/{{.ID}}">Delete</a>
+                    </td>
+                </tr>
+                {{end}}
+            </tbody>
+        </table>
+        {{else}}
+        <p>No items available.</p>
+        {{end}}
 
-                <a href="/create">
-                    <button>Guest Today</button>
-                </a>
-            </div>
-        </div>
-    </body>
+        <!-- Button to add new item -->
+        <a href="/create">
+            <button>Add Item</button>
+        </a>
+
+        <!-- Button to add guest today -->
+        <a href="/add-guest">
+            <button>Guest Today</button>
+        </a>
+    </div>
+
+    <div id="guestlog">
+        <h2>GUEST LIST</h2>
+
+        <!-- Display Guest Table -->
+        {{if .TotalGuest}}
+        <table border="1">
+            <thead>
+                <tr>
+                    <th>Timestamp</th>
+                    <th>TotalGuest</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{range .TotalGuest}}
+                <tr>
+                    <td>{{.TimeStamp}}</td>
+                    <td>{{.TotalGuest}}</td>
+                    <td>
+                        <a href="/edit/{{.ID}}">Edit</a> |
+                        <a href="/delete/{{.ID}}">Delete</a>
+                    </td>
+                </tr>
+                {{end}}
+            </tbody>
+        </table>
+        {{else}}
+        <p>No guests logged.</p>
+        {{end}}
+    </div>
+
+</body>
+
 </html>
 
-
-            
