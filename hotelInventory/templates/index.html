@@ -1,10 +1,11 @@
 
+
 <!DOCTYPE html>
 
 <html lang="en">
     <head>
         <meta charset="UTF-8">
-        <meta name="viewport content="width=device-width, initial-scale=1.0">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Lalaca Inventory Management</title>
     </head>
     
@@ -13,6 +14,7 @@
 
         <div id="bedstore">
             <h2>ITEM LIST</h2>
+            {{if .Items}}
             <table>
                 <thead> 
                     <tr>
@@ -25,22 +27,28 @@
                     {{range .Items}}
                     <tr>
                         <td>{{.Name}}</td>
-
                         <td>{{.Quantity}}</td>
-
                         <td>
                             <a href="/edit/{{.ID}}">Edit</a> |
                             <a href="/delete/{{.ID}}">Delete</a>
-                        <td>
-
+                        </td>
                     </tr>
                     {{end}}
                 </tbody>
             </table>
+            {{else}}
+            <p>No items available.</p>
+            {{end}}
+
+            <!-- Add Item Button -->
+            <div>
+                <a href="/create">
+                    <button>Add Item</button>
+                </a>
+            </div>
+        </div>
     </body>
 </html>
-
-
 
 
             
