@@ -50,26 +50,44 @@ func ShowInventory(w http.ResponseWriter, r *http.Request) {
     }
 }
 
-func CreateInventory(w http.ResponseWriter, r * http.Request) {
-    if r.Method == http.MethodPost {
+
+func CreateInventory(w http.ResponseWriter, r *http.Request) {
+    // Show the form to create a new item when the method is GET
+    if r.Method == http.MethodGet {
+        tmpl, err := template.ParseFiles("templates/create.html")
+        if err != nil {
+            log.Printf("Unable to parse template: %v", err)
+            http.Error(w, "Template error: "+err.Error(), http.StatusInternalServerError)
+            return
+        }
+        err = tmpl.Execute(w, nil) // Render the form with no data (empty form)
+        if err != nil {
+            log.Printf("Error executing template: %v", err)
+            http.Error(w, "Execution error: "+err.Error(), http.StatusInternalServerError)
+            return
+        }
+    } else if r.Method == http.MethodPost {
+        // Handle form submission
         name := r.FormValue("name")
         quantity := r.FormValue("quantity")
 
-        Intqty, err  := strconv.Atoi(quantity)
+        Intqty, err := strconv.Atoi(quantity)
         if err != nil {
-             http.Error(w, "Unable to convert the string to int", http.StatusInternalServerError)
-         }
+            log.Printf("Error converting quantity to int: %v", err)
+            http.Error(w, "Unable to convert quantity", http.StatusInternalServerError)
+            return
+        }
 
-        item := models.Item{Name :name, Quantity:Intqty }
+        item := models.Item{Name: name, Quantity: Intqty}
         result := initializers.DB.Create(&item)
         if result.Error != nil {
-            http.Error(w, "Item not found" ,http.StatusNotFound)
-            return 
+            log.Printf("Error creating item: %v", result.Error)
+            http.Error(w, "Item creation failed", http.StatusInternalServerError)
+            return
         }
-        
-        
 
-
-      http.Redirect(w, r, "/", http.StatusFound)
-  }
+        // Redirect to the inventory list after creating the item
+        http.Redirect(w, r, "/", http.StatusFound)
+    }
 }
+
