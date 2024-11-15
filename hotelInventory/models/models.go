@@ -14,7 +14,7 @@ type Item struct {
 }
 
 
-type UsageLog struct {
+type GuestLog struct {
     gorm.Model
     TimeStamp string `json:"timesstamp"`
     TotalGuest int `json:"total_guest"`

@@ -9,6 +9,7 @@ import(
     "github.com/IamMaheshGurung/projects/hotelInventory/initializers"
 
     "github.com/IamMaheshGurung/projects/hotelInventory/models"
+    "strconv"
 
 )
 
@@ -39,3 +40,27 @@ func ShowInventory(w http.ResponseWriter, r * http.Request){
     }{Items: items})
 }
 
+
+func CreateInventory(w http.ResponseWriter, r * http.Request) {
+    if r.Method == http.MethodPost {
+        name := r.FormValue("name")
+        quantity := r.FormValue("quantity")
+
+        Intqty, err  := strconv.Atoi(quantity)
+        if err != nil {
+             http.Error(w, "Unable to convert the string to int", http.StatusInternalServerError)
+         }
+
+        item := models.Item{Name :name, Quantity:Intqty }
+        result := initializers.DB.Create(&item)
+        if result.Error != nil {
+            http.Error(w, "Item not found" ,http.StatusNotFound)
+            return 
+        }
+        
+        
+
+
+      http.Redirect(w, r, "/", http.StatusFound)
+  }
+}
