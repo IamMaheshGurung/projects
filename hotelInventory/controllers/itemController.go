@@ -10,6 +10,7 @@ import(
 
     "github.com/IamMaheshGurung/projects/hotelInventory/models"
     "strconv"
+    "log"
 
 )
 
@@ -32,6 +33,7 @@ func ShowInventory(w http.ResponseWriter, r * http.Request){
 //for HTML page rendering with templates
     tmpl, err := template.ParseFiles("templates/index.html")
     if err != nil {
+        log.Printf("Unable to get the templates %s", err)
         http.Error(w, err.Error(), http.StatusInternalServerError)
         return 
     }

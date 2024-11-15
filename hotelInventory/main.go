@@ -12,7 +12,7 @@ import (
     "log"
     "github.com/IamMaheshGurung/projects/hotelInventory/initializers"
     
-    "github.com/IamMaheshGurung/projects/hotelInventory/routers"
+    "github.com/IamMaheshGurung/projects/hotelInventory/controllers"
 
 
 )
@@ -34,7 +34,13 @@ initializers.SyncDB()
 func main(){
 //using the gorilla mux for the first time
     router := mux.NewRouter()
-    routers.SetupRouters(router)
+    
+
+    router.HandleFunc("/", controllers.ShowInventory).Methods("GET")
+    router.HandleFunc("/create", controllers.CreateInventory).Methods("POST")
+
+
+
 
     port:= os.Getenv("PORT")
 
@@ -56,7 +62,7 @@ func main(){
        
     }()
 
-
+    
     stop := make(chan os.Signal, 1)
     signal.Notify(stop, os.Kill, os.Interrupt)
     <- stop

@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 
 <html lang="en">
@@ -17,7 +18,6 @@
                     <tr>
                         <th>Name</th>
                         <th>Quantity</th>
-                        <th>Remarks</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -28,14 +28,13 @@
 
                         <td>{{.Quantity}}</td>
 
-                        <td>{{.Remarks}}</td>
                         <td>
                             <a href="/edit/{{.ID}}">Edit</a> |
                             <a href="/delete/{{.ID}}">Delete</a>
                         <td>
 
                     </tr>
-                    {{.end}}
+                    {{end}}
                 </tbody>
             </table>
     </body>
