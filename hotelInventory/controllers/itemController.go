@@ -106,7 +106,62 @@ func CreateInventory(w http.ResponseWriter, r *http.Request) {
     }
 }
 
-//func AutoUpdateInventory(
+// AutoUpdateInventory function: Automatically updates inventory based on guest count
+func AutoUpdateInventory(w http.ResponseWriter, r *http.Request) {
+    // Define items per guest (for simplicity, assume 1 sheet and 1 pillow cover per guest)
+    itemsPerGuest := map[string]int{
+        "sheet":        1,
+        "pillow_cover": 1,
+    }
+
+    // Retrieve the total number of guests (from the `GuestLog` table)
+    var totalGuest []models.GuestLog
+    result := initializers.DB.Find(&totalGuest)
+    if result.Error != nil {
+        log.Printf("Error fetching guest data: %v", result.Error)
+        http.Error(w, result.Error.Error(), http.StatusInternalServerError)
+        return
+    }
+
+    // Total number of guests
+    totalGuestsCount := 0
+    for _, guest := range totalGuest {
+        totalGuestsCount += guest.NumberOfGuests
+    }
+
+    // Log the total number of guests
+    log.Printf("Total guests: %d", totalGuestsCount)
+
+    // Loop through each inventory item and adjust based on guest count
+    for itemName, quantityPerGuest := range itemsPerGuest {
+        // Calculate the total number of items to decrement based on guest count
+        totalItemsToAdjust := totalGuestsCount * quantityPerGuest
+
+        // Fetch the current inventory for the item
+        var inventoryItem models.Item
+        err := initializers.DB.Where("name = ?", itemName).First(&inventoryItem).Error
+        if err != nil {
+            log.Printf("Error fetching inventory for %s: %v", itemName, err)
+            continue
+        }
+
+        // Decrease the inventory by the required amount
+        if inventoryItem.Quantity >= totalItemsToAdjust {
+            // If there are enough items, decrement them
+            newQuantity := inventoryItem.Quantity - totalItemsToAdjust
+            initializers.DB.Model(&inventoryItem).Update("quantity", newQuantity)
+            log.Printf("Decreased inventory for %s by %d", itemName, totalItemsToAdjust)
+        } else {
+            // If not enough inventory, set the quantity to 0 (or handle based on business logic)
+            initializers.DB.Model(&inventoryItem).Update("quantity", 0)
+            log.Printf("Not enough %s in inventory. Setting quantity to 0.", itemName)
+        }
+    }
+
+    // Respond with a success message
+    w.Write([]byte("Inventory updated based on guest count"))
+}
+
 
 
 
