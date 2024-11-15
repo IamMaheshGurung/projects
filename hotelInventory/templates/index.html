@@ -8,6 +8,88 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lalaca Inventory Management</title>
+    <style>
+        /* General Body Styles */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Heading Styles */
+        h1 {
+            background-color: #4CAF50;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            margin: 0;
+        }
+
+        /* Container Styles */
+        #bedstore,
+        #guestlog {
+            margin: 20px;
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Table Styles */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        table th,
+        table td {
+            padding: 10px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+
+        table th {
+            background-color: #f2f2f2;
+        }
+
+        table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        table tr:hover {
+            background-color: #e0e0e0;
+        }
+
+        /* Button Styles */
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 0;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        /* Links */
+        a {
+            text-decoration: none;
+        }
+
+        /* Add Guest Button at the bottom */
+        .bottom-button {
+            text-align: center;
+            margin-top: 20px;
+        }
+    </style>
 </head>
 
 <body>
@@ -18,14 +100,26 @@
 
         <!-- Display Inventory Table -->
         {{if .Items}}
-        <table border="1">
+        <table>
             <thead>
                 <tr>
                     <th>Name</th>
                     <th>Quantity</th>
                     <th>Actions</th>
                 </tr>
-            </thead>
+            </thead>rr = tmpl.Execute(w, struct {
+        Items    []models.Item
+        TotalGuest []models.GuestLog
+    }{
+        Items:     items,
+        TotalGuest: totalGuest,
+    })
+    if err != nil {
+        log.Printf("Error executing template: %v", err)
+        http.Error(w, "Execution error: "+err.Error(), http.StatusInternalServerError)
+        return
+    }
+}
             <tbody>
                 {{range .Items}}
                 <tr>
@@ -47,11 +141,6 @@
         <a href="/create">
             <button>Add Item</button>
         </a>
-
-        <!-- Button to add guest today -->
-        <a href="/add-guest">
-            <button>Guest Today</button>
-        </a>
     </div>
 
     <div id="guestlog">
@@ -59,11 +148,11 @@
 
         <!-- Display Guest Table -->
         {{if .TotalGuest}}
-        <table border="1">
+        <table>
             <thead>
                 <tr>
                     <th>Timestamp</th>
-                    <th>TotalGuest</th>
+                    <th>Total Guest</th>
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -83,6 +172,13 @@
         {{else}}
         <p>No guests logged.</p>
         {{end}}
+    </div>
+
+    <!-- Button to add guest today (placed at the end) -->
+    <div class="bottom-button">
+        <a href="/add-guest">
+            <button>Guest Today</button>
+        </a>
     </div>
 
 </body>
