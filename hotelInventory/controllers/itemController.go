@@ -11,6 +11,8 @@ import(
 
     "github.com/IamMaheshGurung/projects/hotelInventory/models"
     "strconv"
+    "github.com/gorilla/mux"
+
     "log"
 
 )
@@ -135,61 +137,77 @@ func CreateInventory(w http.ResponseWriter, r *http.Request) {
     }
 }
 
-// AutoUpdateInventory function: Automatically updates inventory based on guest count
-func AutoUpdateInventory(w http.ResponseWriter, r *http.Request) {
-    // Define items per guest (for simplicity, assume 1 sheet and 1 pillow cover per guest)
-    itemsPerGuest := map[string]int{
-        "sheet":        1,
-        "pillow_cover": 1,
-    }
 
-    // Retrieve the total number of guests (from the `GuestLog` table)
-    var totalGuest []models.GuestLog
-    result := initializers.DB.Find(&totalGuest)
-    if result.Error != nil {
-        log.Printf("Error fetching guest data: %v", result.Error)
-        http.Error(w, result.Error.Error(), http.StatusInternalServerError)
+func EditInventory(w http.ResponseWriter, r * http.Request) {
+    v := mux.Vars(r)
+    itemID := v["id"]
+    
+    if itemID == "" {
+        http.Error(w, "Item ID is required", http.StatusBadRequest)
         return
     }
 
-    // Total number of guests
-    totalGuestsCount := 0
-    for _, guest := range totalGuest {
-        totalGuestsCount += guest.TotalGuest
-    }
-
-    // Log the total number of guests
-    log.Printf("Total guests: %d", totalGuestsCount)
-
-    // Loop through each inventory item and adjust based on guest count
-    for itemName, quantityPerGuest := range itemsPerGuest {
-        // Calculate the total number of items to decrement based on guest count
-        totalItemsToAdjust := totalGuestsCount * quantityPerGuest
-
-        // Fetch the current inventory for the item
-        var inventoryItem models.Item
-        err := initializers.DB.Where("name = ?", itemName).First(&inventoryItem).Error
-        if err != nil {
-            log.Printf("Error fetching inventory for %s: %v", itemName, err)
-            continue
-        }
-
-        // Decrease the inventory by the required amount
-        if inventoryItem.Quantity >= totalItemsToAdjust {
-            // If there are enough items, decrement them
-            newQuantity := inventoryItem.Quantity - totalItemsToAdjust
-            initializers.DB.Model(&inventoryItem).Update("quantity", newQuantity)
-            log.Printf("Decreased inventory for %s by %d", itemName, totalItemsToAdjust)
+    var item models.Item
+    result := initializers.DB.First(&item, itemID)
+    
+    if result.Error != nil {
+        if result.Error == gorm.ErrRecordNotFound {
+            http.Error(w, "Item not found", http.StatusNotFound)
         } else {
-            // If not enough inventory, set the quantity to 0 (or handle based on business logic)
-            initializers.DB.Model(&inventoryItem).Update("quantity", 0)
-            log.Printf("Not enough %s in inventory. Setting quantity to 0.", itemName)
+            log.Printf("Error fetching item: %v", result.Error)
+            http.Error(w, result.Error.Error(), http.StatusInternalServerError)
         }
+        return
     }
 
-    // Respond with a success message
-    w.Write([]byte("Inventory updated based on guest count"))
+
+    if r.Method == http.MethodGet{
+        tmpl, err := template.ParseFiles("templates/edit.html")
+        if err != nil {
+            log.Printf("Unable to parse the edit.html file:%s", err)
+            http.Error(w, "Unable to parse the file", http.StatusInternalServerError)
+            return 
+        }
+
+        err = tmpl.Execute(w, nil )
+        if err != nil {
+            log.Printf("Unable to execute the form %s", err)
+            http.Error(w, "Unable to execute the file", http.StatusInternalServerError)
+            return 
+        }
+
+    } else if r.Method == http.MethodPost {
+        name := r.FormValue("name")
+        quantity := r.FormValue("quantity")
+
+
+        intQty, err := strconv.Atoi(quantity)
+            if err != nil {
+                log.Printf("Unable to convert the quantiy string into inteeger, %s", err)
+                return 
+            }
+
+            item.Name = name
+            item.Quantity = intQty
+            result := initializers.DB.Save(&item)
+            if result.Error != nil {
+            log.Printf("Error updating item: %v", result.Error)
+            http.Error(w, "Error updating item", http.StatusInternalServerError)
+            return
+        }
+
+        // Redirect back to the inventory list
+        http.Redirect(w, r, "/", http.StatusFound)
+    }
 }
+
+
+
+
+
+
+
+
 
 
 
