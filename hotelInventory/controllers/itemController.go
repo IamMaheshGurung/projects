@@ -5,6 +5,7 @@ package controllers
 
 import(
     "net/http"
+    "gorm.io/gorm"
     "html/template"
     "github.com/IamMaheshGurung/projects/hotelInventory/initializers"
 
@@ -91,8 +92,35 @@ func CreateInventory(w http.ResponseWriter, r *http.Request) {
             log.Printf("Error converting quantity to int: %v", err)
             http.Error(w, "Unable to convert quantity", http.StatusInternalServerError)
             return
+        
         }
 
+
+
+        //checking if the item is already in the list
+
+        var checkItem models.Item
+        
+        result := initializers.DB.Where("name=?", name).First(&checkItem)
+
+        if result.Error != nil  && result.Error != gorm.ErrRecordNotFound{
+            log.Printf("Error querying item not found %v", result.Error)
+            http.Error(w, "Error checking item", http.StatusInternalServerError)
+            return
+        }
+
+        if result.RowsAffected > 0 {
+            checkItem.Quantity += Intqty
+            result := initializers.DB.Save(&checkItem)
+            if result.Error != nil {
+                log.Printf("Error updating item: %v", result.Error)
+                http.Error(w, "Error updating item", http.StatusInternalServerError)
+                return
+            }
+
+             } else {
+
+    
         item := models.Item{Name: name, Quantity: Intqty}
         result := initializers.DB.Create(&item)
         if result.Error != nil {
@@ -100,6 +128,7 @@ func CreateInventory(w http.ResponseWriter, r *http.Request) {
             http.Error(w, "Item creation failed", http.StatusInternalServerError)
             return
         }
+    }
 
         // Redirect to the inventory list after creating the item
         http.Redirect(w, r, "/", http.StatusFound)
@@ -126,7 +155,7 @@ func AutoUpdateInventory(w http.ResponseWriter, r *http.Request) {
     // Total number of guests
     totalGuestsCount := 0
     for _, guest := range totalGuest {
-        totalGuestsCount += guest.NumberOfGuests
+        totalGuestsCount += guest.TotalGuest
     }
 
     // Log the total number of guests
