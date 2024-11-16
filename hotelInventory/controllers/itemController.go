@@ -204,6 +204,43 @@ func EditInventory(w http.ResponseWriter, r * http.Request) {
 
 
 
+// DeleteItem handles the DELETE request to remove an item
+func DeleteItem(w http.ResponseWriter, r *http.Request) {
+    // Extract item ID from URL
+    vars := mux.Vars(r)
+    itemID := vars["id"]
+
+    if itemID == "" {
+        http.Error(w, "Item ID is required", http.StatusBadRequest)
+        return
+    }
+
+    // Find the item by ID
+    var item models.Item
+    result := initializers.DB.First(&item, itemID)
+
+    if result.Error != nil {
+        if result.Error == gorm.ErrRecordNotFound {
+            http.Error(w, "Item not found", http.StatusNotFound)
+        } else {
+            log.Printf("Error fetching item: %v", result.Error)
+            http.Error(w, result.Error.Error(), http.StatusInternalServerError)
+        }
+        return
+    }
+
+    // Delete the item from the database
+    result = initializers.DB.Delete(&item)
+
+    if result.Error != nil {
+        log.Printf("Error deleting item: %v", result.Error)
+        http.Error(w, "Error deleting item", http.StatusInternalServerError)
+        return
+    }
+
+    // Redirect to a list page after deletion
+    http.Redirect(w, r, "/inventory", http.StatusFound)
+}
 
 
 

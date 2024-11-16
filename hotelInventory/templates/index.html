@@ -285,9 +285,11 @@
                         <tr>
                             <td>{{.TimeStamp}}</td>
                             <td>{{.TotalGuest}}</td>
-                            <td>
+                           <td>
                                 <a href="/edit/{{.ID}}">Edit</a> |
-                                <a href="/delete/{{.ID}}">Delete</a>
+                                <form id="deleteGuestForm{{.ID}}" method="POST" action="/delete/{{.ID}}" style="display:inline;">
+                                    <button type="button" onclick="confirmDeleteGuest({{.ID}})">Delete</button>
+                                </form>
                             </td>
                         </tr>
                         {{end}}
@@ -309,7 +311,27 @@
             </a>
         </div>
     </div>
+
+    <script>
+        function confirmDelete(itemID) {
+            // Show a confirmation dialog before proceeding with deletion
+            var result = confirm("Are you sure you want to delete this item?");
+            if (result) {
+                // If user clicks 'OK', submit the delete form for this item
+                var form = document.getElementById('deleteForm' + itemID);
+                form.submit();
+            }
+        }
+
+        function confirmDeleteGuest(itemID) {
+            // Show a confirmation dialog before proceeding with guest deletion
+            var result = confirm("Are you sure you want to delete this guest?");
+            if (result) {
+                var form = document.getElementById('deleteGuestForm' + itemID);
+                form.submit();
+            }
+        }
+    </script>
 </body>
 
 </html>
-
