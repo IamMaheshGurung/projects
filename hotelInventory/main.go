@@ -39,7 +39,7 @@ func main(){
     router.HandleFunc("/", controllers.ShowInventory).Methods("GET")
     router.HandleFunc("/create", controllers.CreateInventory).Methods("POST", "GET")
 
-    router.HandleFunc("/edit", controllers.EditInventory).Methods("POST", "GET")
+    router.HandleFunc("/edit/{id:[0-9]+}", controllers.EditInventory).Methods("GET", "POST")
 
 
 

@@ -169,7 +169,7 @@ func EditInventory(w http.ResponseWriter, r * http.Request) {
             return 
         }
 
-        err = tmpl.Execute(w, nil )
+        err = tmpl.Execute(w,item )
         if err != nil {
             log.Printf("Unable to execute the form %s", err)
             http.Error(w, "Unable to execute the file", http.StatusInternalServerError)
