@@ -205,6 +205,49 @@ func EditInventory(w http.ResponseWriter, r * http.Request) {
 
 
 // DeleteItem handles the DELETE request to remove an item
+func ShowDeletePage(w http.ResponseWriter, r *http.Request) {
+    // Extract item ID from URL
+    vars := mux.Vars(r)
+    itemID := vars["id"]
+
+    if itemID == "" {
+        http.Error(w, "Item ID is required", http.StatusBadRequest)
+        return
+    }
+
+    var item models.Item
+    result := initializers.DB.First(&item, itemID)
+    
+    if result.Error != nil {
+        if result.Error == gorm.ErrRecordNotFound {
+            http.Error(w, "Item not found", http.StatusNotFound)
+        } else {
+            log.Printf("Error fetching item: %v", result.Error)
+            http.Error(w, result.Error.Error(), http.StatusInternalServerError)
+        }
+        return
+    }
+
+    // Render the confirmation template with the item details
+    tmpl, err := template.ParseFiles("templates/delete.html")
+    if err != nil {
+        log.Printf("Error parsing template: %v", err)
+        http.Error(w, "Error parsing template", http.StatusInternalServerError)
+        return
+    }
+
+    err = tmpl.Execute(w, struct {
+        ID string
+    }{
+        ID: itemID,
+    })
+    if err != nil {
+        log.Printf("Error executing template: %v", err)
+        http.Error(w, "Execution error: "+err.Error(), http.StatusInternalServerError)
+    }
+}
+
+// DeleteItem handles the deletion of an item
 func DeleteItem(w http.ResponseWriter, r *http.Request) {
     // Extract item ID from URL
     vars := mux.Vars(r)
@@ -229,20 +272,22 @@ func DeleteItem(w http.ResponseWriter, r *http.Request) {
         return
     }
 
-    // Delete the item from the database
-    result = initializers.DB.Delete(&item)
+    // If the user confirmed deletion, delete the item
+    if r.Method == http.MethodPost {
+        confirm := r.FormValue("confirm")
+        if confirm == "yes" {
+            result = initializers.DB.Delete(&item)
+            if result.Error != nil {
+                log.Printf("Error deleting item: %v", result.Error)
+                http.Error(w, "Error deleting item", http.StatusInternalServerError)
+                return
+            }
+        }
 
-    if result.Error != nil {
-        log.Printf("Error deleting item: %v", result.Error)
-        http.Error(w, "Error deleting item", http.StatusInternalServerError)
-        return
+        // Redirect to the inventory list after deletion or cancellation
+        http.Redirect(w, r, "/inventory", http.StatusFound)
     }
-
-    // Redirect to a list page after deletion
-    http.Redirect(w, r, "/inventory", http.StatusFound)
 }
-
-
 
 
 

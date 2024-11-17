@@ -41,7 +41,8 @@ func main(){
     router.HandleFunc("/delete/{id:[0-9]+}", controllers.DeleteItem).Methods("POST")
 
     router.HandleFunc("/edit/{id:[0-9]+}", controllers.EditInventory).Methods("GET", "POST")
-
+    router.HandleFunc("/delete/{id}", controllers.ShowDeletePage).Methods("GET")
+    router.HandleFunc("/delete/{id}", controllers.DeleteItem).Methods("POST")
 
 
     port:= os.Getenv("PORT")
