@@ -1,22 +1,110 @@
 
+
+
 <!DOCTYPE html>
-
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Delete Item</title>
-    </head>
-    
-    <body>
-        <h1>ARE YOU SURE YOU WANNA DELETE THIS</h1>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delete Item</title>
+    <style>
+        body {
+            background-color: #87CEEB; /* Light blue sky */
+            font-family: 'Press Start 2P', cursive; /* Mario-style font */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
 
+        /* Mario "window" style */
+        .window {
+            background-color: #ffcc00; /* Yellow background like Mario's color */
+            border: 4px solid #333;
+            width: 400px;
+            height: 250px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            padding: 20px;
+            position: relative;
+            text-align: center;
+        }
+
+        .window h1 {
+            font-size: 24px;
+            color: #fff;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 5px rgba(0,0,0,0.7);
+        }
+
+        .window .button {
+            background-color: #ff4747;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            font-size: 18px;
+            margin: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .window .button:hover {
+            background-color: #ff2525;
+        }
+
+        .window .button.no {
+            background-color: #3b9a34; /* Green for "No" */
+        }
+
+        .window .button.no:hover {
+            background-color: #2d7f27;
+        }
+
+        /* Add Mario cloud background */
+        .window::before {
+            content: "";
+            position: absolute;
+            top: -20px;
+            left: -20px;
+            width: 100%;
+            height: 50px;
+            background-image: url('https://www.spriters-resource.com/resources/sheet_icons/2390.png');
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+
+        /* Link styles */
+        a {
+            text-decoration: none;
+            color: #fff;
+            font-size: 16px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.7);
+        }
+
+        a:hover {
+            color: #ffcc00;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="window">
+        <h1>ARE YOU SURE YOU WANNA DELETE THIS?</h1>
+        
         <form action="/delete" method="POST">
-                        <button type="submit">NO</button>
-                        <button type="submit">YES</button>
+            <!-- YES button submits the form with a value of 'yes' -->
+            <button class="button" type="submit" name="confirm" value="yes">YES</button>
+            
+            <!-- NO button submits the form with a value of 'no' -->
+            <button class="button no" type="submit" name="confirm" value="no">NO</button>
         </form>
 
         <br>
         <a href="/">Back to Inventory</a>
-    </body>
+    </div>
+</body>
 </html>
+
