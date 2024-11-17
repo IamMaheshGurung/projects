@@ -94,7 +94,7 @@
     <div class="window">
         <h1>ARE YOU SURE YOU WANNA DELETE THIS?</h1>
         
-        <form action="/delete" method="POST">
+        <form action="/delete/{{.ID}}" method="POST">
             <!-- YES button submits the form with a value of 'yes' -->
             <button class="button" type="submit" name="confirm" value="yes">YES</button>
             
