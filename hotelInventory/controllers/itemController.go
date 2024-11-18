@@ -294,5 +294,41 @@ func DeleteItem(w http.ResponseWriter, r *http.Request) {
 
 
 
+func Createuser(w http.ResponseWriter, r *http.Request) {
+    // Show the form to create a new user when the method is GET
+    if r.Method == http.MethodGet {
+        tmpl, err := template.ParseFiles("templates/user.html")
+        if err != nil {
+            log.Printf("Unable to parse template: %v", err)
+            http.Error(w, "Template error: "+err.Error(), http.StatusInternalServerError)
+            return
+        }
+        err = tmpl.Execute(w, nil) // Render the form with no data (empty form)
+        if err != nil {
+            log.Printf("Error executing template: %v", err)
+            http.Error(w, "Execution error: "+err.Error(), http.StatusInternalServerError)
+            return
+        }
+    } else if r.Method == http.MethodPost {
+        // Handle form submission
+        email := r.FormValue("email")
+        password := r.FormValue("password")
+
+    
+        user := models.User{Email: email, Password: password}
+        result := initializers.DB.Create(&user)
+        if result.Error != nil {
+            log.Printf("Error creating item: %v", result.Error)
+            http.Error(w, "User creation failed", http.StatusInternalServerError)
+            return
+        }
+    }
+
+        // Redirect to the inventory list after creating the item
+        http.Redirect(w, r, "/", http.StatusFound)
+    }
+
+
+
 
 
