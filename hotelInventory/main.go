@@ -38,7 +38,7 @@ func main(){
 
     router.HandleFunc("/", controllers.ShowInventory).Methods("GET")
     router.HandleFunc("/create", controllers.CreateInventory).Methods("POST", "GET")
-    router.HandleFunc("/signup", controllers.Createuser).Methods("POST", "GET")
+    router.HandleFunc("/signup", controllers.Signup).Methods("POST", "GET")
 
     router.HandleFunc("/delete/{id:[0-9]+}", controllers.DeleteItem).Methods("POST")
 

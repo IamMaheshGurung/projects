@@ -56,11 +56,16 @@ func Signup(w http.ResponseWriter, r *http.Request) {
             http.Error(w, "User creation failed", http.StatusInternalServerError)
             return
         }
-        err = json.NewEncoder(w).Encode(result)
+
+        //if we want as json format
+
+        /*
+        w.Header().Set("Content-Type", "application/json")
+        err = json.NewEncoder(w).Encode(user)
         if err!= nil {
             log.Printf("Unable to encode the json %s", err)
             return
-        }
+        }*/
     }
 
         // Redirect to the inventory list after creating the item
