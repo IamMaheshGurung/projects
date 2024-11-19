@@ -303,6 +303,8 @@ func Createuser(w http.ResponseWriter, r *http.Request) {
             http.Error(w, "Template error: "+err.Error(), http.StatusInternalServerError)
             return
         }
+
+
         err = tmpl.Execute(w, nil) // Render the form with no data (empty form)
         if err != nil {
             log.Printf("Error executing template: %v", err)
@@ -314,18 +316,20 @@ func Createuser(w http.ResponseWriter, r *http.Request) {
         email := r.FormValue("email")
         password := r.FormValue("password")
 
+
+        user:= models.User{Email:email, Password:password}
+
     
-        user := models.User{Email: email, Password: password}
         result := initializers.DB.Create(&user)
         if result.Error != nil {
             log.Printf("Error creating item: %v", result.Error)
             http.Error(w, "User creation failed", http.StatusInternalServerError)
             return
         }
-    }
+        }
 
         // Redirect to the inventory list after creating the item
-        http.Redirect(w, r, "/", http.StatusFound)
+        http.Redirect(w, r, "/", http.StatusFound) 
     }
 
 
