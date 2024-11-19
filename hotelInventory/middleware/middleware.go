@@ -10,6 +10,8 @@ import(
     "fmt"
     "github.com/golang-jwt/jwt/v5"
     "context"
+    "github.com/IamMaheshGurung/projects/hotelInventory/models"
+    "github.com/IamMaheshGurung/projects/hotelInventory/initializers"
 )
 
 
@@ -25,7 +27,7 @@ func RequireAuth(next http.Handler) http.Handler{
         if err != nil {
             log.Printf("Unable to get the token string")
         }
-        tokenString  := token.Value
+        tokenString  := tokenCookie.Value
 
         token , err := jwt.Parse(tokenString, func(token *jwt.Token)(interface{}, error) {
             if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
@@ -38,5 +40,29 @@ func RequireAuth(next http.Handler) http.Handler{
             log.Fatal(err)
         }
 
-    }
+        if claims, ok := token.Claims.(jwt.MapClaims); ok {
+            if float64(time.Now().Unix())> claims["exp"].(float64) {
+                log.Printf("The token has been expired %s", err)
+            }
+
+            var user models.User
+
+            initializers.DB.First(&user, claims["sub"])
+
+            if user.ID == 0 {
+                log.Printf("Failed to get the sub")
+                http.Error(w, "Unauthorized", http.StatusUnauthorized)
+                return 
+            }
+
+            ctx:= context.WithValue(r.Context(), userContextKey, &user)
+            next.ServeHTTP(w, r.WithContext(ctx))
+
+        }
+
+        http.Error(w , "Unauthorized", http.StatusUnauthorized)
+
+
+
+    })
 }
