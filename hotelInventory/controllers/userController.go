@@ -5,7 +5,10 @@ package controllers
 
 import(
     "net/http"
-    "encoding/json"
+    //"encoding/json"
+    "os"
+    "time"
+    "github.com/golang-jwt/jwt/v5"
     //"gorm.io/gorm"
     "html/template"
     "github.com/IamMaheshGurung/projects/hotelInventory/initializers"
@@ -68,6 +71,78 @@ func Signup(w http.ResponseWriter, r *http.Request) {
         }*/
     }
 
+        // Redirect to the inventory list after creating the item
+        http.Redirect(w, r, "/", http.StatusFound) 
+    }
+
+func Login(w http.ResponseWriter, r *http.Request) {
+    // Show the form to create a new user when the method is GET
+    if r.Method == http.MethodGet {
+        tmpl, err := template.ParseFiles("templates/Login.html")
+        if err != nil {
+            log.Printf("Unable to parse template: %v", err)
+            http.Error(w, "Template error: "+err.Error(), http.StatusInternalServerError)
+            return
+        }
+
+
+        err = tmpl.Execute(w, nil) // Render the form with no data (empty form)
+        if err != nil {
+            log.Printf("Error executing template: %v", err)
+            http.Error(w, "Execution error: "+err.Error(), http.StatusInternalServerError)
+            return
+        }
+    } else if r.Method == http.MethodPost {
+        // Handle form submission
+        email := r.FormValue("email")
+        password := r.FormValue("password")
+
+
+
+        var user models.User
+
+        initializers.DB.First(&user, "email = ? ", email)
+        if user.ID == 0 {
+            http.Error(w , "Invalid email or cannot be found", http.StatusNotFound)
+            return 
+        }
+
+
+
+        
+
+        err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
+
+        if err != nil {
+            http.Error(w, "Invalid Password or email id", http.StatusUnauthorized)
+            log.Printf("Invaild password")
+        }
+
+        token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+            "sub" : user.ID,
+            "exp" : time.Now().Add(time.Hour * 24 * 30).Unix(),
+        })
+
+        tokenString, err := token.SignedString([]byte(os.Getenv("SECRET")))
+
+        if err != nil {
+            http.Error(w, "Failed to create token", http.StatusInternalServerError)
+            return 
+        }
+
+        
+        cookie := http.Cookie{
+            Name : "Authorization",
+            Value: tokenString,
+            Expires: time.Now().Add(24*time.Hour),
+            HttpOnly: true,
+            Secure: true,
+            SameSite: http.SameSiteLaxMode,
+        }
+
+        http.SetCookie(w, &cookie)
+        
+    }
         // Redirect to the inventory list after creating the item
         http.Redirect(w, r, "/", http.StatusFound) 
     }
