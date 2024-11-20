@@ -11,6 +11,7 @@ type Item struct {
     gorm.Model
     Name string `json:"name"`
     Quantity int `json:"quantity"`
+    UserID uint `json:"user_id"`
 }
 
 
@@ -24,4 +25,5 @@ type User struct {
     gorm.Model
     Email string `json:"email"`
     Password string `json:"password"`
+    Item []Item  `gorm:"foreignkey:UserID"`
 }
