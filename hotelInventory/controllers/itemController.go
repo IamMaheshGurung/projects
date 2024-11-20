@@ -29,7 +29,7 @@ func ShowInventory(w http.ResponseWriter, r *http.Request) {
         return
     }
 
-var items []models.Item  
+var items []*models.Item  
 result := initializers.DB.Where("user_id = ?", user.ID).Find(&items)
         
     // Query database for items
@@ -37,7 +37,14 @@ result := initializers.DB.Where("user_id = ?", user.ID).Find(&items)
         log.Printf("Error fetching items: %v", result.Error)
         http.Error(w, result.Error.Error(), http.StatusInternalServerError)
         return
-    } 
+    }
+    if len(items) == 0 {
+        log.Println("No inventory found for user")
+        http.Error(w, "No inventory found", http.StatusNotFound)
+        return
+    }
+
+
 
 var totalGuest []models.GuestLog
 
