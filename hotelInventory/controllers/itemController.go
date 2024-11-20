@@ -22,17 +22,24 @@ import(
 //Functions which will render inventory list
 
 func ShowInventory(w http.ResponseWriter, r *http.Request) {
-    var items []models.Item
-    var totalGuest []models.GuestLog
 
+    user := GetUser(r)
+    if user != nil {
+        http.Error(w, "Unauthorized", http.StatusUnauthorized)
+        return
+    }
+
+var items []models.Item  
+result := initializers.DB.Where("user_id = ?", user.ID).Find(&items)
+        
     // Query database for items
-    result := initializers.DB.Find(&items)
     if result.Error != nil {
         log.Printf("Error fetching items: %v", result.Error)
         http.Error(w, result.Error.Error(), http.StatusInternalServerError)
         return
-    }
+    } 
 
+var totalGuest []models.GuestLog
 
     allGuest := initializers.DB.Find(&totalGuest)
     if allGuest.Error != nil {

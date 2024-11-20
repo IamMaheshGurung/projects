@@ -21,7 +21,13 @@ import(
 
 )
 
-
+func GetUser(r *http.Request) *models.User {
+    user, ok := r.Context().Value("user").(*models.User)
+    if !ok {
+        return nil 
+    }
+    return user 
+}
 
 func Signup(w http.ResponseWriter, r *http.Request) {
     // Show the form to create a new user when the method is GET

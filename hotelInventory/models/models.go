@@ -7,11 +7,12 @@ import(
 )
 
 
+
 type Item struct {
     gorm.Model
-    Name string `json:"name"`
-    Quantity int `json:"quantity"`
-    UserID uint `json:"user_id"`
+    Name     string `json:"name"`
+    Quantity int    `json:"quantity"`
+    UserID   uint   `json:"user_id"`
 }
 
 
