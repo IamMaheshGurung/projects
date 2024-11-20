@@ -144,7 +144,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
         
     }
         // Redirect to the inventory list after creating the item
-        http.Redirect(w, r, "/signup", http.StatusFound) 
+        http.Redirect(w, r, "/inventory", http.StatusFound) 
     }
 
 
