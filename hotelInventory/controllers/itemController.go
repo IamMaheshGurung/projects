@@ -47,7 +47,7 @@ func ShowInventory(w http.ResponseWriter, r *http.Request) {
     log.Printf("Items found: %d", len(items))
 
     // Parse and render template
-    tmpl, err := template.ParseFiles("templates/index.html")
+    tmpl, err := template.ParseFiles("templates/inventory.html")
     if err != nil {
         log.Printf("Unable to parse template: %v", err)
         http.Error(w, "Template error: "+err.Error(), http.StatusInternalServerError)

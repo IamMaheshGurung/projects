@@ -26,6 +26,8 @@ func RequireAuth(next http.Handler) http.Handler{
         tokenCookie, err := r.Cookie("Authorization")
         if err != nil {
             log.Printf("Unable to get the token string")
+            http.Error(w, "Unauthorized", http.StatusUnauthorized)
+            return 
         }
         tokenString  := tokenCookie.Value
 
@@ -37,12 +39,15 @@ func RequireAuth(next http.Handler) http.Handler{
             return []byte(os.Getenv("SECRET")), nil 
         })
         if err != nil {
-            log.Fatal(err)
-        }
+            log.Printf("Error parsing token: %v", err)
+            http.Error(w, "Unauthorized", http.StatusUnauthorized)
+            return        }
 
         if claims, ok := token.Claims.(jwt.MapClaims); ok {
             if float64(time.Now().Unix())> claims["exp"].(float64) {
                 log.Printf("The token has been expired %s", err)
+                http.Error(w, "Unauthorized", http.StatusUnauthorized)
+                return
             }
 
             var user models.User
@@ -57,6 +62,7 @@ func RequireAuth(next http.Handler) http.Handler{
 
             ctx:= context.WithValue(r.Context(), userContextKey, &user)
             next.ServeHTTP(w, r.WithContext(ctx))
+            return
 
         }
 

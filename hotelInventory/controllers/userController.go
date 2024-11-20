@@ -102,6 +102,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
         var user models.User
 
         initializers.DB.First(&user, "email = ? ", email)
+
         if user.ID == 0 {
             http.Error(w , "Invalid email or cannot be found", http.StatusNotFound)
             return 
@@ -116,6 +117,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
         if err != nil {
             http.Error(w, "Invalid Password or email id", http.StatusUnauthorized)
             log.Printf("Invaild password")
+            return
         }
 
         token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
@@ -142,9 +144,10 @@ func Login(w http.ResponseWriter, r *http.Request) {
 
         http.SetCookie(w, &cookie)
         
-    }
+    
         // Redirect to the inventory list after creating the item
-        http.Redirect(w, r, "/inventory", http.StatusFound) 
+        http.Redirect(w, r, "/inventory", http.StatusFound)
+    }
     }
 
 
