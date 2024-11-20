@@ -33,7 +33,7 @@ initializers.SyncDB()
 func main(){
 //using the gorilla mux for the first time
     router := mux.NewRouter()
-    
+   router.HandleFunc("/", controllers.HomePageDisplay).Methods("POST", "GET") 
     router.HandleFunc("/signup", controllers.Signup).Methods("POST", "GET")
     router.HandleFunc("/login", controllers.Login).Methods("POST", "GET")
 
