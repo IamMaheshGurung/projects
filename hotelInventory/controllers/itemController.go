@@ -282,12 +282,9 @@ func DeleteItem(w http.ResponseWriter, r *http.Request) {
                 http.Error(w, "Error deleting item", http.StatusInternalServerError)
                 return
             }
-        http.Redirect(w, r, "/", http.StatusFound)
+        http.Redirect(w, r, "/inventory", http.StatusFound)
 
         }
-
-        // Redirect to the inventory list after deletion or cancellation
-        http.Redirect(w, r, "/", http.StatusFound)
     }
 }
 

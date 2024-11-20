@@ -40,9 +40,11 @@ func main(){
     router.Handle("/inventory", middleware.RequireAuth(http.HandlerFunc(controllers.ShowInventory))).Methods("GET")
     router.Handle("/create", middleware.RequireAuth(http.HandlerFunc(controllers.CreateInventory))).Methods("POST", "GET")
     router.Handle("/edit/{id:[0-9]+}", middleware.RequireAuth(http.HandlerFunc(controllers.EditInventory))).Methods("POST", "GET")
-    router.Handle("/delete/{id:[0-9]+}", middleware.RequireAuth(http.HandlerFunc(controllers.DeleteItem))).Methods("POST")
+    router.Handle("/delete/{id:[0-9]+}", middleware.RequireAuth(http.HandlerFunc(controllers.ShowDeletePage))).Methods("GET")
 
 
+    router.Handle("/delete/{id:[0-9]+}", middleware.RequireAuth(http.HandlerFunc(controllers.DeleteItem))).Methods("POST","GET")
+  
 
 
     port:= os.Getenv("PORT")
