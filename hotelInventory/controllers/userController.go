@@ -78,7 +78,7 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 func Login(w http.ResponseWriter, r *http.Request) {
     // Show the form to create a new user when the method is GET
     if r.Method == http.MethodGet {
-        tmpl, err := template.ParseFiles("templates/Login.html")
+        tmpl, err := template.ParseFiles("templates/login.html")
         if err != nil {
             log.Printf("Unable to parse template: %v", err)
             http.Error(w, "Template error: "+err.Error(), http.StatusInternalServerError)

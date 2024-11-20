@@ -11,9 +11,8 @@ import (
     "context"
     "log"
     "github.com/IamMaheshGurung/projects/hotelInventory/initializers"
-    
     "github.com/IamMaheshGurung/projects/hotelInventory/controllers"
-
+    "github.com/IamMaheshGurung/projects/hotelInventory/middleware"
 
 )
 
@@ -35,17 +34,15 @@ func main(){
 //using the gorilla mux for the first time
     router := mux.NewRouter()
     
-
-    router.HandleFunc("/", controllers.ShowInventory).Methods("GET")
-    router.HandleFunc("/create", controllers.CreateInventory).Methods("POST", "GET")
     router.HandleFunc("/signup", controllers.Signup).Methods("POST", "GET")
     router.HandleFunc("/login", controllers.Login).Methods("POST", "GET")
 
-    router.HandleFunc("/delete/{id:[0-9]+}", controllers.DeleteItem).Methods("POST")
+    router.Handle("/inventory", middleware.RequireAuth(http.HandlerFunc(controllers.ShowInventory))).Methods("GET")
+    router.Handle("/create", middleware.RequireAuth(http.HandlerFunc(controllers.CreateInventory))).Methods("POST", "GET")
+    router.Handle("/edit/{id:[0-9]+}", middleware.RequireAuth(http.HandlerFunc(controllers.EditInventory))).Methods("POST", "GET")
+    router.Handle("/delete/{id:[0-9]+}", middleware.RequireAuth(http.HandlerFunc(controllers.DeleteItem))).Methods("POST")
 
-    router.HandleFunc("/edit/{id:[0-9]+}", controllers.EditInventory).Methods("GET", "POST")
-    router.HandleFunc("/delete/{id}", controllers.ShowDeletePage).Methods("GET")
-    router.HandleFunc("/delete/{id}", controllers.DeleteItem).Methods("POST")
+
 
 
     port:= os.Getenv("PORT")
