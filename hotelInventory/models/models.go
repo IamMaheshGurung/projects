@@ -16,10 +16,11 @@ type Item struct {
 }
 
 
+
 type GuestLog struct {
     gorm.Model
-    TimeStamp string `json:"timesstamp"`
-    TotalGuest int `json:"total_guest"`
+    UserID uint    `gorm:"not null"`     
+    User   User    `gorm:"foreignKey:UserID"` 
 }
 
 type User struct {

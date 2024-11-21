@@ -1,74 +1,78 @@
+
+
 package middleware
 
+import (
+	"context"
+	"fmt"
+	"log"
+	"net/http"
+	"os"
+	"time"
 
-import(
-
-    "net/http"
-    "os"
-    "time"
-    "log"
-    "fmt"
-    "github.com/golang-jwt/jwt/v5"
-    "context"
-    "github.com/IamMaheshGurung/projects/hotelInventory/models"
-    "github.com/IamMaheshGurung/projects/hotelInventory/initializers"
+	"github.com/golang-jwt/jwt/v5"
+	"github.com/IamMaheshGurung/projects/hotelInventory/models"
+	"github.com/IamMaheshGurung/projects/hotelInventory/initializers"
 )
 
-
-
-type contextKey string 
-
+type contextKey string
 
 const userContextKey = contextKey("user")
 
-func RequireAuth(next http.Handler) http.Handler{
-    return http.HandlerFunc(func(w http.ResponseWriter, r * http.Request){
+// RequireAuth middleware to check for JWT token and validate the user
+
+func RequireAuth(next http.Handler) http.Handler {
+    return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
         tokenCookie, err := r.Cookie("Authorization")
         if err != nil {
-            log.Printf("Unable to get the token string")
+            log.Printf("Unable to get the token from cookie: %v", err)
             http.Error(w, "Unauthorized", http.StatusUnauthorized)
-            return 
+            return
         }
-        tokenString  := tokenCookie.Value
 
-        token , err := jwt.Parse(tokenString, func(token *jwt.Token)(interface{}, error) {
+        tokenString := tokenCookie.Value
+        token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
             if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-                return nil, fmt.Errorf("Unexpected signing method : %v", token.Header["alg"])
+                return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
             }
-
-            return []byte(os.Getenv("SECRET")), nil 
+            return []byte(os.Getenv("SECRET")), nil
         })
+
         if err != nil {
             log.Printf("Error parsing token: %v", err)
             http.Error(w, "Unauthorized", http.StatusUnauthorized)
-            return        }
+            return
+        }
 
         if claims, ok := token.Claims.(jwt.MapClaims); ok {
-            if float64(time.Now().Unix())> claims["exp"].(float64) {
-                log.Printf("The token has been expired %s", err)
+            expirationTime := claims["exp"].(float64)
+            if float64(time.Now().Unix()) > expirationTime {
+                log.Printf("Token expired")
                 http.Error(w, "Unauthorized", http.StatusUnauthorized)
                 return
             }
 
+            userID := int64(claims["sub"].(float64)) // Convert to int64
             var user models.User
+            result := initializers.DB.First(&user, userID)
 
-            initializers.DB.First(&user, claims["sub"])
-
-            if user.ID == 0 {
-                log.Printf("Failed to get the sub")
+            if result.Error != nil || user.ID == 0 {
+                log.Printf("User not found or unauthorized: %v", result.Error)
                 http.Error(w, "Unauthorized", http.StatusUnauthorized)
-                return 
+                return
             }
 
-            ctx:= context.WithValue(r.Context(), userContextKey, &user)
+            log.Printf("User found: %+v", user) // Log the user found
+
+            // Store the user in the context
+            ctx := context.WithValue(r.Context(), "user", &user)
+            log.Printf("User stored in context: %+v", user) // Verify the user in context
+
             next.ServeHTTP(w, r.WithContext(ctx))
             return
-
         }
 
-        http.Error(w , "Unauthorized", http.StatusUnauthorized)
-
-
-
+        http.Error(w, "Unauthorized", http.StatusUnauthorized)
     })
 }
+

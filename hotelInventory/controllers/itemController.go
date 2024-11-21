@@ -21,65 +21,66 @@ import(
 
 //Functions which will render inventory list
 
+
+
+// ShowInventory is the handler for displaying inventory items and guest logs
 func ShowInventory(w http.ResponseWriter, r *http.Request) {
+	user := GetUser(r)  // Assuming GetUser is a function that retrieves the user from the request context
+	if user == nil {
+		log.Println("User not found or unauthorized in the inventory")
+		http.Error(w, "Unauthorized", http.StatusUnauthorized)
+		return
+	}
 
-    user := GetUser(r)
-    if user != nil {
-        http.Error(w, "Unauthorized", http.StatusUnauthorized)
-        return
-    }
+	// Query for the inventory items for the user
+	var items []models.Item
+	result := initializers.DB.Where("user_id = ?", user.ID).Find(&items)
+	if result.Error != nil {
+		log.Printf("Error fetching items for user %d: %v", user.ID, result.Error)
+		http.Error(w, "Internal server error", http.StatusInternalServerError)
+		return
+	}
 
-var items []*models.Item  
-result := initializers.DB.Where("user_id = ?", user.ID).Find(&items)
-        
-    // Query database for items
-    if result.Error != nil {
-        log.Printf("Error fetching items: %v", result.Error)
-        http.Error(w, result.Error.Error(), http.StatusInternalServerError)
-        return
-    }
-    if len(items) == 0 {
-        log.Println("No inventory found for user")
-        http.Error(w, "No inventory found", http.StatusNotFound)
-        return
-    }
+	// If no items are found, log the message
+	if len(items) == 0 {
+		log.Printf("No inventory items found for user %d", user.ID)
+	}
 
+	// Query for the guest logs (total guests for the user)
+	var totalGuest []models.GuestLog
+	result = initializers.DB.Where("user_id = ?", user.ID).Find(&totalGuest)
+	if result.Error != nil {
+		log.Printf("Error fetching guest logs for user %d: %v", user.ID, result.Error)
+		http.Error(w, "Internal server error", http.StatusInternalServerError)
+		return
+	}
 
+	// If no guest logs are found, log the message
+	if len(totalGuest) == 0 {
+		log.Printf("No guest logs found for user %d", user.ID)
+	}
 
-var totalGuest []models.GuestLog
+	// Parse the HTML template
+	tmpl, err := template.ParseFiles("templates/inventory.html")
+	if err != nil {
+		log.Printf("Unable to parse template: %v", err)
+		http.Error(w, "Template error: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
 
-    allGuest := initializers.DB.Find(&totalGuest)
-    if allGuest.Error != nil {
-        log.Printf("Error fetching items: %v", result.Error)
-        http.Error(w, result.Error.Error(), http.StatusInternalServerError)
-        return
-
-        }
-
-    
-
-    log.Printf("Items found: %d", len(items))
-
-    // Parse and render template
-    tmpl, err := template.ParseFiles("templates/inventory.html")
-    if err != nil {
-        log.Printf("Unable to parse template: %v", err)
-        http.Error(w, "Template error: "+err.Error(), http.StatusInternalServerError)
-        return
-    }
-
-    err = tmpl.Execute(w, struct {
-        Items    []models.Item
-        TotalGuest []models.GuestLog
-    }{
-        Items:     items,
-        TotalGuest: totalGuest,
-    })
-    if err != nil {
-        log.Printf("Error executing template: %v", err)
-        http.Error(w, "Execution error: "+err.Error(), http.StatusInternalServerError)
-        return
-    }
+	// Execute the template with the fetched data
+	err = tmpl.Execute(w, struct {
+		Items      []models.Item
+		TotalGuest []models.GuestLog
+	}{
+		Items:      items,      // Ensure items is not nil
+		TotalGuest: totalGuest, // Ensure totalGuest is not nil
+	})
+	if err != nil {
+		log.Printf("Error executing template: %v", err)
+		http.Error(w, "Execution error: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
 }
 
 

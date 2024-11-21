@@ -37,7 +37,7 @@ func main(){
     router.HandleFunc("/signup", controllers.Signup).Methods("POST", "GET")
     router.HandleFunc("/login", controllers.Login).Methods("POST", "GET")
 
-    router.Handle("/inventory", middleware.RequireAuth(http.HandlerFunc(controllers.ShowInventory))).Methods("GET")
+    router.Handle("/inventory", middleware.RequireAuth(http.HandlerFunc(controllers.ShowInventory))).Methods("GET","POST")
     router.Handle("/create", middleware.RequireAuth(http.HandlerFunc(controllers.CreateInventory))).Methods("POST", "GET")
     router.Handle("/edit/{id:[0-9]+}", middleware.RequireAuth(http.HandlerFunc(controllers.EditInventory))).Methods("POST", "GET")
     router.Handle("/delete/{id:[0-9]+}", middleware.RequireAuth(http.HandlerFunc(controllers.ShowDeletePage))).Methods("GET")

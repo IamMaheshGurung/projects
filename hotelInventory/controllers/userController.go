@@ -7,6 +7,7 @@ import(
     "net/http"
     //"encoding/json"
     "os"
+    "fmt"
     "time"
     "github.com/golang-jwt/jwt/v5"
     //"gorm.io/gorm"
@@ -24,6 +25,7 @@ import(
 func GetUser(r *http.Request) *models.User {
     user, ok := r.Context().Value("user").(*models.User)
     if !ok {
+        fmt.Println("User in the context not found")
         return nil 
     }
     return user 
@@ -47,7 +49,7 @@ func Signup(w http.ResponseWriter, r *http.Request) {
             return
         }
     } else if r.Method == http.MethodPost {
-        // Handle form submission
+        // Handle form User not found or unauthorizedsubmission
         email := r.FormValue("email")
         password := r.FormValue("password")
 
@@ -65,16 +67,6 @@ func Signup(w http.ResponseWriter, r *http.Request) {
             http.Error(w, "User creation failed", http.StatusInternalServerError)
             return
         }
-
-        //if we want as json format
-
-        /*
-        w.Header().Set("Content-Type", "application/json")
-        err = json.NewEncoder(w).Encode(user)
-        if err!= nil {
-            log.Printf("Unable to encode the json %s", err)
-            return
-        }*/
     }
 
         // Redirect to the inventory list after creating the item
