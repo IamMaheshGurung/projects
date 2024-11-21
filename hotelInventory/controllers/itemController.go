@@ -84,9 +84,9 @@ func ShowInventory(w http.ResponseWriter, r *http.Request) {
 }
 
 
+
 func CreateInventory(w http.ResponseWriter, r *http.Request) {
-    // Show the form to create a new item when the method is GET
-    if r.Method == http.MethodGet {
+       if r.Method == http.MethodGet {
         tmpl, err := template.ParseFiles("templates/create.html")
         if err != nil {
             log.Printf("Unable to parse template: %v", err)
@@ -100,33 +100,44 @@ func CreateInventory(w http.ResponseWriter, r *http.Request) {
             return
         }
     } else if r.Method == http.MethodPost {
+        // Assuming GetUser() retrieves the user from the context
+        user := GetUser(r)  
+        if user == nil {
+            log.Println("User not found in the context")
+            http.Error(w, "Unauthorized", http.StatusUnauthorized)
+            return
+        }
+
         // Handle form submission
         name := r.FormValue("name")
         quantity := r.FormValue("quantity")
 
+        // Convert quantity from string to integer
         Intqty, err := strconv.Atoi(quantity)
         if err != nil {
             log.Printf("Error converting quantity to int: %v", err)
-            http.Error(w, "Unable to convert quantity", http.StatusInternalServerError)
+            http.Error(w, "Unable to convert quantity", http.StatusBadRequest)
             return
-        
         }
 
+        if name == "" {
+            log.Println("Item name is empty")
+            http.Error(w, "Item name is required", http.StatusBadRequest)
+            return
+        }
 
-
-        //checking if the item is already in the list
-
+        // Check if the item already exists
         var checkItem models.Item
-        
-        result := initializers.DB.Where("name=?", name).First(&checkItem)
+        result := initializers.DB.Where("name = ?", name).First(&checkItem)
 
-        if result.Error != nil  && result.Error != gorm.ErrRecordNotFound{
+        if result.Error != nil && result.Error != gorm.ErrRecordNotFound {
             log.Printf("Error querying item not found %v", result.Error)
             http.Error(w, "Error checking item", http.StatusInternalServerError)
             return
         }
 
         if result.RowsAffected > 0 {
+            // Item exists, update quantity
             checkItem.Quantity += Intqty
             result := initializers.DB.Save(&checkItem)
             if result.Error != nil {
@@ -134,20 +145,22 @@ func CreateInventory(w http.ResponseWriter, r *http.Request) {
                 http.Error(w, "Error updating item", http.StatusInternalServerError)
                 return
             }
-
-             } else {
-
-    
-        item := models.Item{Name: name, Quantity: Intqty}
-        result := initializers.DB.Create(&item)
-        if result.Error != nil {
-            log.Printf("Error creating item: %v", result.Error)
-            http.Error(w, "Item creation failed", http.StatusInternalServerError)
-            return
+        } else {
+            // Item doesn't exist, create a new one
+            item := models.Item{
+                Name:     name,
+                Quantity: Intqty,
+                UserID:   user.ID,
+            }
+            result := initializers.DB.Create(&item)
+            if result.Error != nil {
+                log.Printf("Error creating item: %v", result.Error)
+                http.Error(w, "Item creation failed", http.StatusInternalServerError)
+                return
+            }
         }
-    }
 
-        // Redirect to the inventory list after creating the item
+        // Redirect to the inventory list after creating or updating the item
         http.Redirect(w, r, "/", http.StatusFound)
     }
 }
