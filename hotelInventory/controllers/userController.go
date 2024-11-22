@@ -114,6 +114,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 
         if err != nil {
             http.Error(w, "Invalid Password or email id", http.StatusUnauthorized)
+            RenderError(w, "Invalid email or password")
             log.Printf("Invaild password")
             return
         }

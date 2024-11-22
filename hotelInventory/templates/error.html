@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,24 +6,77 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Error</title>
     <style>
+        /* Retro Mario style font */
+        @font-face {
+            font-family: 'PixelFont';
+            src: url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+        }
+
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'PixelFont', sans-serif;
+            background-color: #ffec00; /* Yellow background to represent Mario */
+            color: #000;
             text-align: center;
             margin-top: 50px;
-        }
-        .error-message {
-            background-color: #f44336;
-            color: white;
             padding: 20px;
-            border-radius: 5px;
+        }
+
+        h1 {
+            font-size: 48px;
+            color: #d20000; /* Red like Mario's hat */
+            text-shadow: 2px 2px 5px #ff0000, -2px -2px 5px #ff0000;
+        }
+
+        .error-message {
+            background-color: #ff5733;
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            font-size: 24px;
             display: inline-block;
+            margin-top: 30px;
+            box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.4);
+            text-align: center;
+        }
+
+        /* "Broken" symbol effect */
+        .error-symbol {
+            font-size: 80px;
+            font-weight: bold;
+            color: #ff0000;
+            display: inline-block;
+            animation: shake 0.5s ease infinite;
+        }
+
+        /* Keyframe for shaking effect to represent "broken" */
+        @keyframes shake {
+            0% { transform: rotate(0deg); }
+            25% { transform: rotate(10deg); }
+            50% { transform: rotate(0deg); }
+            75% { transform: rotate(-10deg); }
+            100% { transform: rotate(0deg); }
+        }
+
+        .error-symbol:before {
+            content: "⚠️"; /* Using a warning symbol */
+        }
+
+        /* Styling for the broken text */
+        .error-text {
+            font-size: 32px;
+            margin-top: 20px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            word-wrap: break-word;
         }
     </style>
 </head>
 <body>
     <h1>Oops! Something went wrong</h1>
     <div class="error-message">
-        <p>{{.}}</p> 
+        <!-- "Broken" symbol -->
+        <div class="error-symbol"></div>
+        <p class="error-text">{{.}}</p> <!-- This is where the error message will be inserted -->
     </div>
 </body>
 </html>
