@@ -13,6 +13,7 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/IamMaheshGurung/projects/hotelInventory/models"
 	"github.com/IamMaheshGurung/projects/hotelInventory/initializers"
+    "github.com/IamMaheshGurung/projects/hotelInventory/controllers"
 )
 
 type contextKey string
@@ -26,6 +27,7 @@ func RequireAuth(next http.Handler) http.Handler {
         tokenCookie, err := r.Cookie("Authorization")
         if err != nil {
             log.Printf("Unable to get the token from cookie: %v", err)
+            controllers.RenderError(w, "Unable to get the token from the coookie")
             http.Error(w, "Unauthorized", http.StatusUnauthorized)
             return
         }
@@ -40,6 +42,7 @@ func RequireAuth(next http.Handler) http.Handler {
 
         if err != nil {
             log.Printf("Error parsing token: %v", err)
+            controllers.RenderError(w, "Error in parsing the template")
             http.Error(w, "Unauthorized", http.StatusUnauthorized)
             return
         }
@@ -48,6 +51,7 @@ func RequireAuth(next http.Handler) http.Handler {
             expirationTime := claims["exp"].(float64)
             if float64(time.Now().Unix()) > expirationTime {
                 log.Printf("Token expired")
+                controllers.RenderError(w, "token has been expired")
                 http.Error(w, "Unauthorized", http.StatusUnauthorized)
                 return
             }
@@ -58,6 +62,7 @@ func RequireAuth(next http.Handler) http.Handler {
 
             if result.Error != nil || user.ID == 0 {
                 log.Printf("User not found or unauthorized: %v", result.Error)
+                controllers.RenderError(w, "User not found or password incorrect")
                 http.Error(w, "Unauthorized", http.StatusUnauthorized)
                 return
             }
